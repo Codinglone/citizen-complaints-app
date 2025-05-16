@@ -1,0 +1,20 @@
+{
+  "name": "citizen-engagement-monorepo",
+  "private": true,
+  "workspaces": [
+    "fastify",
+    "fastapi",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:server": "pnpm --filter server dev",
+    "dev:fastapi-ai": "pnpm --filter fastapi-ai dev",
+    "dev:client": "pnpm --filter client dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test"
+  },
+  "dependencies": {
+    "pg": "^8.16.0",
+    "typeorm": "^0.3.24"
+  }
+}
