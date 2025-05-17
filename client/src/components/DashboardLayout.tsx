@@ -8,14 +8,7 @@ import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 type ThemeName = 
   | 'light'
   | 'dark'
-  | 'cupcake'
-  | 'bumblebee'
-  | 'emerald'
-  | 'corporate'
-  | 'synthwave'
-  | 'retro'
-  | 'cyberpunk'
-  | 'garden';
+  | 'synthwave';
 
 interface DashboardLayoutProps {
   isAdmin?: boolean;

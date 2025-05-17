@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../hooks/useAuth';
 
 export const LandingPage: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const { isAuthenticated, login } = useAuth();
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'fr' : 'en';
@@ -20,14 +22,22 @@ export const LandingPage: React.FC = () => {
             <h1 className="mb-5 text-5xl font-bold">{t('landing.hero.title')}</h1>
             <p className="mb-8 text-xl">{t('landing.hero.subtitle')}</p>
             <div className="flex flex-col md:flex-row gap-4 justify-center">
-              <Link to="/submit-complaint" className="btn btn-primary">
-                {t('landing.submitComplaint')}
-              </Link>
-              <Link to="/signin" className="btn btn-outline btn-secondary">
-                {t('landing.signIn')}
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/dashboard/submit" className="btn btn-primary">
+                  {t('landing.submitComplaint')}
+                </Link>
+              ) : (
+                <>
+                  <button onClick={() => login()} className="btn btn-primary">
+                    {t('landing.signIn')}
+                  </button>
+                  <Link to="/submit-complaint" className="btn btn-outline btn-secondary">
+                    {t('landing.submitAnonymously')}
+                  </Link>
+                </>
+              )}
               <button onClick={toggleLanguage} className="btn btn-outline">
-                {i18n.language === 'en' ? 'Français' : 'English'}
+                {i18n.language === 'en' ? '🇫🇷 Français' : '🇺🇸 English'}
               </button>
             </div>
           </div>

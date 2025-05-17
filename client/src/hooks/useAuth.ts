@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import { useState, useEffect } from 'react';
 
 interface User {
@@ -5,34 +6,72 @@ interface User {
   fullName: string;
   email: string;
   role: string;
+  picture?: string;
 }
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const {
+    isAuthenticated,
+    user: auth0User,
+    loginWithRedirect,
+    logout,
+    getAccessTokenSilently,
+    isLoading,
+    error
+  } = useAuth0();
+  
   const [user, setUser] = useState<User | null>(null);
-
+  
   useEffect(() => {
-    // Check if the user is authenticated
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-          setUser(null);
-        }
-      } catch (error) {
-        console.error('Error checking authentication:', error);
-        setIsAuthenticated(false);
-        setUser(null);
+    // For debugging
+    if (auth0User) {
+      console.log("Auth0 user object:", auth0User);
+    }
+    
+    if (isAuthenticated && auth0User) {
+      setUser({
+        id: auth0User.sub || '',
+        fullName: auth0User.name || '',
+        email: auth0User.email || '',
+        role: 'citizen', // Default role
+        picture: auth0User.picture
+      });
+    } else {
+      setUser(null);
+    }
+  }, [isAuthenticated, auth0User]);
+  
+  // Function to get the token for API calls
+  const getToken = async () => {
+    try {
+      return await getAccessTokenSilently();
+    } catch (error) {
+      console.error('Error getting token:', error);
+      return null;
+    }
+  };
+  
+  const login = () => {
+    loginWithRedirect({
+      appState: {
+        returnTo: window.location.pathname
       }
-    };
-
-    checkAuth();
-  }, []);
-
-  return { isAuthenticated, user };
-}; 
+    });
+  };
+  
+  const handleRedirectCallback = async () => {
+    // Simple implementation that redirects to the dashboard after auth
+    window.location.href = '/dashboard';
+  };
+  
+  return { 
+    isAuthenticated, 
+    user, 
+    login, 
+    logout: () => logout({ logoutParams: { returnTo: window.location.origin } }), 
+    getToken,
+    isLoading,
+    error,
+    handleRedirectCallback
+  };
+};

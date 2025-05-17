@@ -19,10 +19,10 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  password: string;
+  @Column({ nullable: true })
+  password: string; // We'll keep this for backward compatibility but won't use it
 
-  @Column()
+  @Column({ default: '' })
   phoneNumber: string;
 
   @Column({ nullable: true })
@@ -33,6 +33,9 @@ export class User {
 
   @Column({ default: "citizen" })
   role: string;
+
+  @Column({ nullable: true })
+  auth0Id: string; // Store Auth0 user ID for reference
 
   @OneToMany(() => Complaint, (complaint) => complaint.user)
   complaints: Complaint[];

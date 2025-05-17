@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-type ThemeName = 'light' | 'dark' | 'cupcake' | 'bumblebee' | 'emerald' | 
-  'corporate' | 'synthwave' | 'retro' | 'cyberpunk' | 'garden';
+type ThemeName = 'light' | 'dark' | 'synthwave';
 
 export const useTheme = () => {
   const [theme, setThemeState] = useState<ThemeName>(() => {

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useApi } from '../utils/api';
 
 export const SubmitComplaint: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { fetchWithAuth } = useApi();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -56,9 +60,10 @@ export const SubmitComplaint: React.FC = () => {
         }
       }
       
-      const response = await fetch('/api/complaints', {
+      const response = await fetchWithAuth('/api/complaints', {
         method: 'POST',
-        body: submitData
+        body: submitData,
+        requireAuth: isAuthenticated // Only require auth if user is logged in
       });
       
       if (response.ok) {
@@ -148,17 +153,17 @@ export const SubmitComplaint: React.FC = () => {
               />
             </div>
             
-            <div className="form-control flex flex-col">
+            <div className="form-control">
               <label className="label">
-              <span className="label-text font-medium">{t('complaint.description')}</span>
+                <span className="label-text font-medium">{t('complaint.description')}</span>
               </label>
               <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder={t('complaint.descriptionPlaceholder')}
-              className="textarea textarea-bordered h-32"
-              required
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder={t('complaint.descriptionPlaceholder')}
+                className="textarea textarea-bordered h-32"
+                required
               />
             </div>
             
@@ -181,7 +186,7 @@ export const SubmitComplaint: React.FC = () => {
               <button 
                 type="button" 
                 className="btn btn-ghost"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/')}
               >
                 Cancel
               </button>

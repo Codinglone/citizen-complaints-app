@@ -4,7 +4,7 @@ interface Profile {
   id: string;
   fullName: string;
   email: string;
-  profileImage: string;
+  profileImage?: string;
 }
 
 interface ProfileAvatarProps {
@@ -12,13 +12,19 @@ interface ProfileAvatarProps {
 }
 
 export const ProfileAvatar: React.FC<ProfileAvatarProps> = ({ profile }) => {
+  // Use a default avatar if no profile or no profileImage
   const defaultAvatar = 'https://avatar.iran.liara.run/public/31';
   const avatarUrl = profile?.profileImage || defaultAvatar;
+  
+  // For debugging
+  console.log("Profile in Avatar:", profile);
+  console.log("Avatar URL:", avatarUrl);
 
   return (
-    <div className="flex items-center space-x-2">
-      <img src={avatarUrl} alt={profile?.fullName || 'User'} className="w-10 h-10 rounded-full" />
-      <span>{profile?.fullName || 'Guest'}</span>
-    </div>
+    <img 
+      src={avatarUrl} 
+      alt={profile?.fullName || 'User'} 
+      className="w-full h-full rounded-full object-cover"
+    />
   );
-}; 
+};

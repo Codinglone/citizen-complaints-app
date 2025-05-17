@@ -1,34 +1,30 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './hooks/useAuth';
 import { useTheme } from './hooks/useTheme';
 import { useProfile } from './hooks/useProfile';
+import { ProfileAvatar } from './components/ProfileAvatar';
 import { LandingPage } from './pages/LandingPage';
-import { SignIn } from './pages/SignIn';
-import { Register } from './pages/Register';
 import { AdminPanel } from './pages/AdminPanel';
 import { UserDashboard } from './pages/UserDashboard';
-import { ProfileAvatar } from './components/ProfileAvatar';
+import { SubmitComplaint } from './pages/SubmitComplaint';
+import { SubmitComplaintForm } from './pages/SubmitComplaintForm';
 import './i18n';
 
-// Create protected route wrapper
-type ProtectedRouteProps = {
-  children: React.ReactNode;
-  isAuthenticated: boolean;
-};
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, isAuthenticated }) => {
-  if (!isAuthenticated) {
-    return <Navigate to="/signin" />;
-  }
-  return <>{children}</>;
+// Add a simple callback component
+const AuthCallback = () => {
+  const { handleRedirectCallback } = useAuth();
+  React.useEffect(() => {
+    handleRedirectCallback();
+  }, [handleRedirectCallback]);
+  
+  return <div>Loading...</div>;
 };
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
-  // const { isAuthenticated, user } = useAuth();
-  const [isAuthenticated, setIsAuthenticated] = React.useState(true); // Placeholder for authentication state
+  const { isAuthenticated, login, logout, isLoading } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { profile } = useProfile();
 
@@ -36,6 +32,14 @@ const App: React.FC = () => {
     const newLang = i18n.language === 'en' ? 'fr' : 'en';
     i18n.changeLanguage(newLang);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="loader animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
     <Router>
@@ -63,23 +67,20 @@ const App: React.FC = () => {
                         {t('nav.adminPanel')}
                       </Link>
                       <ProfileAvatar profile={profile} />
+                      <button onClick={() => logout()} className="btn btn-ghost">
+                        {t('nav.signOut')}
+                      </button>
                     </>
                   ) : (
                     <>
-                      <Link to="/signin" className="btn btn-ghost">
+                      <button onClick={() => login()} className="btn btn-primary">
                         {t('nav.signIn')}
-                      </Link>
-                      <Link to="/register" className="btn btn-ghost">
-                        {t('nav.register')}
-                      </Link>
+                      </button>
+                      <button onClick={toggleLanguage} className="btn btn-ghost">
+                        {i18n.language === 'en' ? 'Français' : 'English'}
+                      </button>
                     </>
                   )}
-                  <button onClick={toggleTheme} className="btn btn-ghost btn-circle">
-                    {theme === 'light' ? '🌙' : '☀️'}
-                  </button>
-                  <button onClick={toggleLanguage} className="btn btn-ghost btn-circle">
-                    {i18n.language === 'en' ? '🇫🇷' : '🇺🇸'}
-                  </button>
                 </div>
               </div>
             </nav>
@@ -87,29 +88,14 @@ const App: React.FC = () => {
         </Routes>
 
         <Routes>
-          {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/admin/*" element={<AdminPanel />} />
+          <Route path="/dashboard/*" element={<UserDashboard />} />
+          <Route path="/submit-complaint" element={<SubmitComplaint />} />
+          <Route path="/submit-complaint-form" element={<SubmitComplaintForm />} />
           
-          {/* Protected routes */}
-          <Route path="/dashboard/*" element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <UserDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/*" element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <AdminPanel />
-            </ProtectedRoute>
-          } />
-          
-          {/* Redirect /submit-complaint to the dashboard */}
-          <Route path="/submit-complaint" element={
-            isAuthenticated ? 
-            <Navigate to="/dashboard/submit" /> : 
-            <Navigate to="/signin" />
-          } />
+          {/* Add callback route */}
+          <Route path="/callback" element={<AuthCallback />} />
         </Routes>
       </div>
     </Router>
