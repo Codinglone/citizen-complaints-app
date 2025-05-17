@@ -1,33 +1,45 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from "typeorm";
+import { Complaint } from "./Complaint";
 
 @Entity()
 export class User {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column()
+  fullName: string;
 
-    @Column()
-    fullName: string
+  @Column({ unique: true })
+  email: string;
 
-    @Column()
-    email: string
+  @Column()
+  password: string;
 
-    @Column()
-    password: string
+  @Column()
+  phoneNumber: string;
 
-    @Column()
-    phoneNumber: string
+  @Column({ nullable: true })
+  profileImage: string;
 
-    @Column()
-    city: string
+  @Column({ nullable: true })
+  city: string;
 
-    @Column()
-    role: string
+  @Column({ default: "citizen" })
+  role: string;
 
-    @CreateDateColumn()
-    createdAt: Date
+  @OneToMany(() => Complaint, (complaint) => complaint.user)
+  complaints: Complaint[];
 
-    @UpdateDateColumn()
-    updatedAt: Date
+  @CreateDateColumn()
+  createdAt: Date;
 
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

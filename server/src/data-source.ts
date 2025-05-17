@@ -2,6 +2,10 @@ require("dotenv").config();
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { User } from "./entities/User";
+import { Agency } from "./entities/Agency";
+import { Category } from "./entities/Category";
+import { Complaint } from "./entities/Complaint";
+import { Notification } from "./entities/Notification";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -26,7 +30,7 @@ export const AppDataSource = new DataSource({
       }),
   synchronize: true,
   logging: process.env.NODE_ENV === "development",
-  entities: [User],
+  entities: [User, Agency, Category, Complaint, Notification],
   migrations: [],
   subscribers: []
 });

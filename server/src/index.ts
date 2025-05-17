@@ -6,5 +6,7 @@ AppDataSource.initialize()
     console.log(
       "Here you can setup and run express / fastify / any other framework."
     );
+
+    console.log("Sample user created:");
   })
   .catch((error) => console.log(error));
