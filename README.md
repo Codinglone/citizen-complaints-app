@@ -63,8 +63,6 @@ AI Layer (FastAPI + Hugging Face API)
 ├── .github/
 │   └── workflows/
 ```
----
-
 
 ---
 
