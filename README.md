@@ -1,27 +1,49 @@
-```
-root/
-├── apps/
-│   ├── fastify-api/            # Fastify + TypeORM + PostgreSQL backend
-│   │   ├── src/
-│   │   │   ├── entities/
-│   │   │   ├── routes/
-│   │   │   └── index.ts
-│   │   ├── ormconfig.ts
-│   │   └── package.json
-│   ├── fastapi-ai/             # FastAPI AI services (routing + sentiment)
-│   │   ├── main.py
-│   │   └── requirements.txt
-│   └── react-dashboard/        # React + DaisyUI frontend
-│       ├── public/
-│       ├── src/
-│       │   ├── components/
-│       │   ├── pages/
-│       │   └── App.tsx
-│       └── package.json
+.
+├── README.md
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── client/
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public/
+│   │   └── vite.svg
+│   ├── src/
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   ├── index.css
+│   │   ├── vite-env.d.ts
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── assets/
+│   ├── index.html
+│   ├── tsconfig.json
+│   ├── tsconfig.app.json
+│   ├── tsconfig.node.json
+│   ├── vite.config.ts
+│   └── eslint.config.js
+├── server/
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tsconfig.json
+│   ├── src/
+│   │   ├── index.ts
+│   │   ├── data-source.ts
+│   │   ├── entities/
+│   │   │   └── User.ts
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── migrations/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── schemas/
+│   │   ├── seeds/
+│   │   └── utils/
+│   └── node_modules/
+├── libs/
+├── fastapi-ai/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml              # GitHub Actions CI/CD for monorepo
-├── README.md
 ```
 ---
 
@@ -114,8 +136,7 @@ Customize with Render deploy hooks or Railway CLI.
 - Authentication via Clerk/Auth0
 - Email notifications
 - Historical analytics
-- Vector similarity search (ChromaDB)
 
 ---
 
-Built with ❤️ for civic innovation and government transparency.
+Built with ❤️ by Niyokwizerwa Fabrice for civic innovation and government transparency.
