@@ -1,61 +1,201 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 export const SubmitComplaint: React.FC = () => {
   const { t } = useTranslation();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    categoryId: '',
+    location: '',
+    attachments: null as FileList | null
+  });
+  
+  // Mock categories data (in a real app, this would come from the API)
+  const categories = [
+    { id: '1', name: t('complaint.categories.roads') },
+    { id: '2', name: t('complaint.categories.water') },
+    { id: '3', name: t('complaint.categories.waste') },
+    { id: '4', name: t('complaint.categories.electricity') },
+    { id: '5', name: t('complaint.categories.publicTransport') },
+    { id: '6', name: t('complaint.categories.noise') },
+    { id: '7', name: t('complaint.categories.other') }
+  ];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData(prev => ({ ...prev, attachments: e.target.files }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
     try {
+      // Create form data for file uploads
+      const submitData = new FormData();
+      submitData.append('title', formData.title);
+      submitData.append('description', formData.description);
+      submitData.append('categoryId', formData.categoryId);
+      submitData.append('location', formData.location);
+      
+      // Add attachments if any
+      if (formData.attachments) {
+        for (let i = 0; i < formData.attachments.length; i++) {
+          submitData.append('attachments', formData.attachments[i]);
+        }
+      }
+      
       const response = await fetch('/api/complaints', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, description }),
+        body: submitData
       });
+      
       if (response.ok) {
-        alert(t('submitComplaint.success'));
-        setTitle('');
-        setDescription('');
+        setSuccess(true);
+        // Reset form
+        setFormData({
+          title: '',
+          description: '',
+          categoryId: '',
+          location: '',
+          attachments: null
+        });
+        
+        // Redirect to complaints list after successful submission
+        setTimeout(() => {
+          navigate('/dashboard/complaints');
+        }, 2000);
       } else {
-        alert(t('submitComplaint.error'));
+        throw new Error('Failed to submit complaint');
       }
     } catch (error) {
       console.error('Error submitting complaint:', error);
-      alert(t('submitComplaint.error'));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-100">
-      <h1 className="text-4xl font-bold mb-4">{t('submitComplaint.title')}</h1>
-      <form onSubmit={handleSubmit} className="w-full max-w-md">
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">{t('submitComplaint.titleLabel')}</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">{t('submitComplaint.descriptionLabel')}</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary w-full">
-          {t('submitComplaint.submit')}
-        </button>
-      </form>
+    <div className="card bg-base-100 shadow-xl w-full max-w-4xl mx-auto">
+      <div className="card-body">
+        <h2 className="card-title text-2xl font-bold">{t('complaint.title')}</h2>
+        
+        {success ? (
+          <div className="alert alert-success mt-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>{t('complaint.success')}</span>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">{t('complaint.title')}</span>
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Enter a brief title for your complaint"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+            
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">{t('complaint.category')}</span>
+              </label>
+              <select
+                name="categoryId"
+                value={formData.categoryId}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+                required
+              >
+                <option value="" disabled>{t('complaint.categoryPlaceholder')}</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">{t('complaint.location')}</span>
+              </label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                placeholder={t('complaint.locationPlaceholder')}
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+            
+            <div className="form-control flex flex-col">
+              <label className="label">
+              <span className="label-text font-medium">{t('complaint.description')}</span>
+              </label>
+              <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder={t('complaint.descriptionPlaceholder')}
+              className="textarea textarea-bordered h-32"
+              required
+              />
+            </div>
+            
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">{t('complaint.attachments')}</span>
+                <span className="label-text-alt">{t('complaint.attachmentsDescription')}</span>
+              </label>
+              <input
+                type="file"
+                name="attachments"
+                onChange={handleFileChange}
+                className="file-input file-input-bordered w-full"
+                multiple
+                accept="image/*,.pdf,.doc,.docx"
+              />
+            </div>
+            
+            <div className="flex justify-end gap-2">
+              <button 
+                type="button" 
+                className="btn btn-ghost"
+                onClick={() => navigate('/dashboard')}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className={`btn btn-primary ${isSubmitting ? 'loading' : ''}`}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : t('complaint.submit')}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
-}; 
+};

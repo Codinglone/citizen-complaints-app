@@ -271,7 +271,7 @@ export const ManageComplaints: React.FC = () => {
                 <td>{getStatusBadge(complaint.status)}</td>
                 <td>{getPriorityBadge(complaint.priority)}</td>
                 <td>{complaint.submittedBy}</td>
-                <td>{new Date(complaint.date).toLocaleString()}</td>
+                <td>{new Date(complaint.date).toLocaleDateString().substring(0, 10)}</td>
                 <td>
                   <div className="flex gap-2">
                     <button 
@@ -280,17 +280,6 @@ export const ManageComplaints: React.FC = () => {
                     >
                       View
                     </button>
-                    <button className="btn btn-xs">Assign</button>
-                    <div className="dropdown dropdown-end">
-                      <label tabIndex={0} className="btn btn-xs btn-ghost">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-4 h-4 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
-                      </label>
-                      <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                        <li><a>Update Status</a></li>
-                        <li><a>Add Note</a></li>
-                        <li><a>Transfer</a></li>
-                      </ul>
-                    </div>
                   </div>
                 </td>
               </tr>

@@ -107,8 +107,9 @@ export const SubmitComplaintForm: React.FC = () => {
           </select>
         </div>
         
-        <div className="form-control">
+        <div className="form-control flex flex-col">
           <label className="label">
+            <br />
             <span className="label-text">{t('complaint.description')}</span>
           </label>
           <textarea 
@@ -121,7 +122,7 @@ export const SubmitComplaintForm: React.FC = () => {
           ></textarea>
         </div>
         
-        <div className="form-control">
+        <div className="form-control flex flex-col">
           <label className="label">
             <span className="label-text">{t('complaint.location')}</span>
           </label>

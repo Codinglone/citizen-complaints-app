@@ -1,9 +1,56 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, XAxis, YAxis, 
+  CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
+  RadialBarChart, RadialBar
+} from 'recharts';
 
 export const Analytics: React.FC = () => {
   const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState('month');
+  
+  // Mock data for charts
+  const complaintVolumeData = [
+    { name: 'Week 1', value: 25 },
+    { name: 'Week 2', value: 45 },
+    { name: 'Week 3', value: 65 },
+    { name: 'Week 4', value: 90 },
+    { name: 'Week 5', value: 75 },
+    { name: 'Week 6', value: 85 },
+    { name: 'Week 7', value: 60 },
+  ];
+  
+  const categoryData = [
+    { name: 'Roads', value: 32, fill: '#8884d8' },
+    { name: 'Water', value: 15, fill: '#83a6ed' },
+    { name: 'Waste', value: 25, fill: '#8dd1e1' },
+    { name: 'Electricity', value: 10, fill: '#82ca9d' },
+    { name: 'Noise', value: 18, fill: '#a4de6c' },
+  ];
+  
+  const statusData = [
+    { name: 'Resolved', value: 40, fill: '#82ca9d' },
+    { name: 'In Progress', value: 30, fill: '#8884d8' },
+    { name: 'Pending', value: 20, fill: '#ffc658' },
+    { name: 'Assigned', value: 8, fill: '#83a6ed' },
+    { name: 'Escalated', value: 2, fill: '#ff8042' },
+  ];
+  
+  const responseTimeData = [
+    { name: 'Sanitation', value: 3.2, fill: '#8884d8' },
+    { name: 'Water Auth', value: 2.7, fill: '#83a6ed' },
+    { name: 'Roads', value: 2.1, fill: '#8dd1e1' },
+    { name: 'Parks', value: 1.6, fill: '#82ca9d' },
+    { name: 'Env. Prot.', value: 1.1, fill: '#a4de6c' },
+    { name: 'Transport', value: 0.8, fill: '#ffc658' },
+  ];
+
+  const sentimentData = [
+    { name: 'Negative', value: 20, fill: '#ff8042' },
+    { name: 'Neutral', value: 40, fill: '#ffc658' },
+    { name: 'Positive', value: 60, fill: '#82ca9d' },
+  ];
   
   return (
     <div className="space-y-6">
@@ -81,22 +128,30 @@ export const Analytics: React.FC = () => {
           <div className="card-body">
             <h2 className="card-title">Complaint Volume Over Time</h2>
             <div className="mt-4 h-64 bg-base-100 rounded-lg p-4">
-              {/* ASCII Art Chart (Replace with real Chart.js) */}
-              <div className="mockup-code bg-primary text-primary-content">
-                <pre><code>              Complaint Volume</code></pre>
-                <pre><code>100 |      *</code></pre>
-                <pre><code>    |     * *     *</code></pre>
-                <pre><code> 75 |    *   *   * *</code></pre>
-                <pre><code>    |   *     * *   *</code></pre>
-                <pre><code> 50 |  *       *     *</code></pre>
-                <pre><code>    | *</code></pre>
-                <pre><code> 25 |*</code></pre>
-                <pre><code>    |____________________</code></pre>
-                <pre><code>     W1 W2 W3 W4 W5 W6 W7</code></pre>
-              </div>
-              <div className="text-center text-xs mt-2">
-                Note: This is a placeholder for a real chart
-              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={complaintVolumeData}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="value" 
+                    name="Complaints"
+                    stroke="#8884d8" 
+                    activeDot={{ r: 8 }} 
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -106,22 +161,26 @@ export const Analytics: React.FC = () => {
           <div className="card-body">
             <h2 className="card-title">Complaints by Category</h2>
             <div className="mt-4 h-64 bg-base-100 rounded-lg p-4">
-              {/* ASCII Art Pie Chart (Replace with real Chart.js) */}
-              <div className="mockup-code bg-secondary text-secondary-content">
-                <pre><code>       Complaints by Category</code></pre>
-                <pre><code>        .-"""""-.    </code></pre>
-                <pre><code>      .'          '.  </code></pre>
-                <pre><code>     /   Roads 32%  \ </code></pre>
-                <pre><code>    |               | </code></pre>
-                <pre><code>    | Water    Noise|  </code></pre>
-                <pre><code>    | 15%      18%  |  </code></pre>
-                <pre><code>     \   Waste 25% /  </code></pre>
-                <pre><code>      '.          .'   </code></pre>
-                <pre><code>        '-......-'     </code></pre>
-              </div>
-              <div className="text-center text-xs mt-2">
-                Note: This is a placeholder for a real chart
-              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={true}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value}`, 'Complaints']} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -131,22 +190,28 @@ export const Analytics: React.FC = () => {
           <div className="card-body">
             <h2 className="card-title">Complaint Status Distribution</h2>
             <div className="mt-4 h-64 bg-base-100 rounded-lg p-4">
-              {/* ASCII Art Bar Chart (Replace with real Chart.js) */}
-              <div className="mockup-code bg-accent text-accent-content">
-                <pre><code>     Complaint Status Distribution</code></pre>
-                <pre><code>40% |   ██</code></pre>
-                <pre><code>    |   ██</code></pre>
-                <pre><code>30% |   ██    ██</code></pre>
-                <pre><code>    |   ██    ██</code></pre>
-                <pre><code>20% |   ██    ██    ██</code></pre>
-                <pre><code>    |   ██    ██    ██    ██</code></pre>
-                <pre><code>10% |   ██    ██    ██    ██    ██</code></pre>
-                <pre><code>    |___██____██____██____██____██___</code></pre>
-                <pre><code>        Res   InP   Pen   Ass   Esc</code></pre>
-              </div>
-              <div className="text-center text-xs mt-2">
-                Note: This is a placeholder for a real chart
-              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={statusData}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                  <Legend />
+                  <Bar dataKey="value" name="Percentage" radius={[4, 4, 0, 0]}>
+                    {statusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -156,21 +221,29 @@ export const Analytics: React.FC = () => {
           <div className="card-body">
             <h2 className="card-title">Response Time by Department (Days)</h2>
             <div className="mt-4 h-64 bg-base-100 rounded-lg p-4">
-              {/* ASCII Art Horizontal Bar Chart (Replace with real Chart.js) */}
-              <div className="mockup-code bg-neutral text-neutral-content">
-                <pre><code>     Response Time by Department</code></pre>
-                <pre><code>Sanitation  |████████████| 3.2</code></pre>
-                <pre><code>Water Auth  |██████████  | 2.7</code></pre>
-                <pre><code>Roads       |████████    | 2.1</code></pre>
-                <pre><code>Parks       |██████      | 1.6</code></pre>
-                <pre><code>Env. Prot.  |████        | 1.1</code></pre>
-                <pre><code>Transport   |███         | 0.8</code></pre>
-                <pre><code>           0  1  2  3  4  5</code></pre>
-                <pre><code>                Days</code></pre>
-              </div>
-              <div className="text-center text-xs mt-2">
-                Note: This is a placeholder for a real chart
-              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  layout="vertical"
+                  data={responseTimeData.sort((a, b) => b.value - a.value)}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 100,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" domain={[0, 'dataMax + 0.5']} />
+                  <YAxis type="category" dataKey="name" />
+                  <Tooltip formatter={(value) => [`${value} days`, 'Response Time']} />
+                  <Legend />
+                  <Bar dataKey="value" name="Days" radius={[0, 4, 4, 0]}>
+                    {responseTimeData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -197,22 +270,35 @@ export const Analytics: React.FC = () => {
           <div className="card-body">
             <h2 className="card-title">Sentiment Analysis</h2>
             <div className="mt-4 h-64 bg-base-100 rounded-lg p-4">
-              <div className="mockup-code">
-                <pre><code>     Sentiment Distribution</code></pre>
-                <pre><code>60% |            ████</code></pre>
-                <pre><code>    |            ████</code></pre>
-                <pre><code>    |            ████</code></pre>
-                <pre><code>40% |      ████  ████</code></pre>
-                <pre><code>    |      ████  ████</code></pre>
-                <pre><code>    |      ████  ████</code></pre>
-                <pre><code>20% | ████ ████  ████</code></pre>
-                <pre><code>    | ████ ████  ████</code></pre>
-                <pre><code>    |_████_████__████____</code></pre>
-                <pre><code>     Negative Neutral Positive</code></pre>
-              </div>
-              <div className="text-center text-xs mt-2">
-                AI-powered sentiment analysis of complaint descriptions
-              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <RadialBarChart 
+                  cx="50%" 
+                  cy="50%" 
+                  innerRadius="20%" 
+                  outerRadius="80%" 
+                  barSize={30} 
+                  data={sentimentData}
+                >
+                  <RadialBar
+                    minAngle={15}
+                    label={{ position: 'insideStart', fill: '#fff' }}
+                    background
+                    clockWise
+                    dataKey="value"
+                  >
+                    {sentimentData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </RadialBar>
+                  <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                  <Legend 
+                    iconSize={10} 
+                    layout="vertical" 
+                    verticalAlign="middle" 
+                    align="right"
+                  />
+                </RadialBarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>

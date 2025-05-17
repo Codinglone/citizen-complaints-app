@@ -12,21 +12,21 @@ export const Settings: React.FC = () => {
         <div className="card-body">
           <h2 className="card-title mb-4">Account Settings</h2>
           
-          <div className="form-control w-full max-w-md">
+          <div className="form-control flex flex-col w-full max-w-md">
             <label className="label">
               <span className="label-text">Email</span>
             </label>
             <input type="email" value="user@example.com" className="input input-bordered" readOnly />
           </div>
           
-          <div className="form-control w-full max-w-md mt-4">
+          <div className="form-control flex flex-col w-full max-w-md mt-4">
             <label className="label">
               <span className="label-text">Name</span>
             </label>
             <input type="text" defaultValue="John Doe" className="input input-bordered" />
           </div>
           
-          <div className="form-control w-full max-w-md mt-4">
+          <div className="form-control flex flex-col w-full max-w-md mt-4">
             <label className="label">
               <span className="label-text">Phone Number</span>
             </label>
@@ -46,11 +46,6 @@ export const Settings: React.FC = () => {
           <div className="flex items-center justify-between mb-3">
             <span>Email Notifications</span>
             <input type="checkbox" className="toggle toggle-primary" defaultChecked />
-          </div>
-          
-          <div className="flex items-center justify-between mb-3">
-            <span>SMS Notifications</span>
-            <input type="checkbox" className="toggle toggle-primary" />
           </div>
           
           <div className="flex items-center justify-between mb-3">

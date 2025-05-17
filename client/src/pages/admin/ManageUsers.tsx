@@ -225,7 +225,7 @@ export const ManageUsers: React.FC = () => {
                 <td>{getRoleBadge(user.role)}</td>
                 <td>{user.department || 'N/A'}</td>
                 <td>{getStatusBadge(user.status)}</td>
-                <td>{new Date(user.lastLogin).toLocaleString()}</td>
+                <td>{new Date(user.lastLogin).toLocaleString().substring(0,16)}</td>
                 <td>
                   <div className="flex gap-2">
                     <button 
@@ -234,16 +234,6 @@ export const ManageUsers: React.FC = () => {
                     >
                       View
                     </button>
-                    <div className="dropdown dropdown-end">
-                      <label tabIndex={0} className="btn btn-xs btn-ghost">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-4 h-4 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
-                      </label>
-                      <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                        <li><a>Edit User</a></li>
-                        <li><a>Change Role</a></li>
-                        <li><a>{user.status === 'active' ? 'Deactivate' : 'Activate'}</a></li>
-                      </ul>
-                    </div>
                   </div>
                 </td>
               </tr>
