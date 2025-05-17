@@ -1,3 +1,21 @@
+
+
+### 🏛️ Citizen Complaints Management Platform (MVP)
+
+An AI-powered citizen complaint submission and routing system. Citizens can submit feedback, view status updates, and government agencies can respond. AI routes submissions to the right department and performs sentiment analysis.
+
+---
+
+## 📦 Architecture Overview
+
+```
+Frontend (React + DaisyUI)
+    ⬇️
+Backend (Fastify + TypeORM + PostgreSQL)
+    ⬇️
+AI Layer (FastAPI + Hugging Face API)
+```
+
 ```
 ├── README.md
 ├── .gitignore
@@ -47,23 +65,6 @@
 ```
 ---
 
-# README.md
-
-## 🏛️ Citizen Engagement Platform (MVP)
-
-An AI-powered citizen complaint submission and routing system. Citizens can submit feedback, view status updates, and government agencies can respond. AI routes submissions to the right department and performs sentiment analysis.
-
----
-
-## 📦 Architecture Overview
-
-```
-Frontend (React + DaisyUI)
-    ⬇️
-Backend (Fastify + TypeORM + PostgreSQL)
-    ⬇️
-AI Layer (FastAPI + Hugging Face API)
-```
 
 ---
 
