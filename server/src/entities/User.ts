@@ -37,6 +37,9 @@ export class User {
   @Column({ nullable: true })
   auth0Id: string; // Store Auth0 user ID for reference
 
+  @Column({ nullable: true })
+  department: string;
+
   @OneToMany(() => Complaint, (complaint) => complaint.user)
   complaints: Complaint[];
 

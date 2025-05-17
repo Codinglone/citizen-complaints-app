@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { AppDataSource } from '../data-source';
 import { User } from '../entities/User';
 import { Auth0User } from '../types/auth0';
+import * as jwt from 'jsonwebtoken';
 
 // Verify JWT token
 export async function verifyToken(request: FastifyRequest, reply: FastifyReply) {
@@ -16,11 +17,32 @@ export async function verifyToken(request: FastifyRequest, reply: FastifyReply) 
     const token = authHeader.split(' ')[1];
     
     try {
-      // Use the custom verifier we added to the fastify instance
-      const decoded = await request.server.verifyAuth0Token(token) as Auth0User;
-      
-      // Add user info to request
-      request.user = decoded;
+      // First, try to verify as a regular JWT token
+      try {
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_SECRET || 'your-secret-key-for-signing-tokens'
+        ) as { id: string, email: string, role: string };
+        
+        // If we get here, it's a valid JWT token
+        // Load the user from database
+        const userRepository = AppDataSource.getRepository(User);
+        const user = await userRepository.findOne({ where: { id: decoded.id } });
+        
+        if (!user) {
+          throw new Error('User not found');
+        }
+        
+        // Set request.dbUser directly
+        request.dbUser = user;
+        
+      } catch (jwtError) {
+        // If not a valid JWT token, try Auth0
+        const decoded = await request.server.verifyAuth0Token(token) as Auth0User;
+        
+        // Add Auth0 user info to request
+        request.user = decoded;
+      }
     } catch (verifyError) {
       request.log.error(verifyError);
       reply.code(401).send({ error: 'Unauthorized - Invalid token' });
@@ -37,13 +59,18 @@ export async function requireAuth(request: FastifyRequest, reply: FastifyReply) 
   try {
     await verifyToken(request, reply);
     
-    // If we get here, token is valid
+    // If dbUser is already set by the JWT verification, we're good
+    if (request.dbUser) {
+      return;
+    }
+    
+    // If we get here and don't have an Auth0 user, unauthorized
     if (!request.user) {
       reply.code(401).send({ error: 'Unauthorized' });
       return;
     }
     
-    // Optional: Lookup user in database
+    // Lookup user in database
     const userRepository = AppDataSource.getRepository(User);
     let user = await userRepository.findOne({ 
       where: [

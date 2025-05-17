@@ -1,30 +1,25 @@
 import React from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import { AdminProtectedRoute } from '../components/AdminProtectedRoute';
 import { DashboardLayout } from '../components/DashboardLayout';
-import { ProtectedRoute } from '../components/ProtectedRoute';
+
+// Import admin pages
 import { AdminHome } from './admin/AdminHome';
 import { ManageComplaints } from './admin/ManageComplaints';
 import { ManageUsers } from './admin/ManageUsers';
 import { Analytics } from './admin/Analytics';
-
-// Wrapper component that applies the DashboardLayout
-const AdminDashboardLayout: React.FC = () => {
-  return (
-    <DashboardLayout isAdmin={true}>
-      <Outlet />
-    </DashboardLayout>
-  );
-};
+import { Settings } from './dashboard/Settings';
 
 export const AdminPanel: React.FC = () => {
   return (
     <Routes>
-      <Route element={<ProtectedRoute requiredRole={['admin']} />}>
-        <Route element={<AdminDashboardLayout />}>
+      <Route element={<AdminProtectedRoute />}>
+        <Route element={<DashboardLayout isAdmin={true} />}>
           <Route index element={<AdminHome />} />
           <Route path="complaints" element={<ManageComplaints />} />
           <Route path="users" element={<ManageUsers />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Route>
     </Routes>

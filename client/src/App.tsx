@@ -7,6 +7,7 @@ import { useProfile } from './hooks/useProfile';
 import { ProfileAvatar } from './components/ProfileAvatar';
 import { LandingPage } from './pages/LandingPage';
 import { AdminPanel } from './pages/AdminPanel';
+import { AdminLogin } from './pages/AdminLogin';
 import { UserDashboard } from './pages/UserDashboard';
 import { SubmitComplaint } from './pages/SubmitComplaint';
 import { SubmitComplaintForm } from './pages/SubmitComplaintForm';
@@ -54,32 +55,34 @@ const App: React.FC = () => {
                 <Link to="/" className="text-xl font-bold">
                   {t('app.title')}
                 </Link>
-                <div className="flex items-center space-x-4">
+                <div className="flex gap-4 items-center">
+                  <button onClick={toggleLanguage} className="btn btn-ghost btn-circle">
+                    {i18n.language === 'en' ? 'FR' : 'EN'}
+                  </button>
+                  <button onClick={toggleTheme} className="btn btn-ghost btn-circle">
+                    {theme === 'light' ? '🌙' : '☀️'}
+                  </button>
                   {isAuthenticated ? (
-                    <>
-                      <Link to="/dashboard" className="btn btn-secondary">
-                        {t('nav.dashboard')}
-                      </Link>
-                      <Link to="/dashboard/submit" className="btn btn-primary">
-                        {t('nav.submitComplaint')}
-                      </Link>
-                      <Link to="/admin" className="btn btn-accent">
-                        {t('nav.adminPanel')}
-                      </Link>
-                      <ProfileAvatar profile={profile} />
-                      <button onClick={() => logout()} className="btn btn-ghost">
-                        {t('nav.signOut')}
-                      </button>
-                    </>
+                    <div className="dropdown dropdown-end">
+                      <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                        <div className="w-10 rounded-full">
+                          <ProfileAvatar profile={profile} />
+                        </div>
+                      </label>
+                      <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-52">
+                        <li><Link to="/dashboard">{t('nav.dashboard')}</Link></li>
+                        <li><a onClick={logout}>{t('nav.signout')}</a></li>
+                      </ul>
+                    </div>
                   ) : (
-                    <>
-                      <button onClick={() => login()} className="btn btn-primary">
-                        {t('nav.signIn')}
+                    <div className="flex gap-2">
+                      <button onClick={login} className="btn btn-primary">
+                        {t('nav.signin')}
                       </button>
-                      <button onClick={toggleLanguage} className="btn btn-ghost">
-                        {i18n.language === 'en' ? 'Français' : 'English'}
-                      </button>
-                    </>
+                      <Link to="/admin/login" className="btn btn-outline">
+                        {t('nav.adminSignin')}
+                      </Link>
+                    </div>
                   )}
                 </div>
               </div>
@@ -89,12 +92,11 @@ const App: React.FC = () => {
 
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/*" element={<AdminPanel />} />
           <Route path="/dashboard/*" element={<UserDashboard />} />
           <Route path="/submit-complaint" element={<SubmitComplaint />} />
           <Route path="/submit-complaint-form" element={<SubmitComplaintForm />} />
-          
-          {/* Add callback route */}
           <Route path="/callback" element={<AuthCallback />} />
         </Routes>
       </div>
