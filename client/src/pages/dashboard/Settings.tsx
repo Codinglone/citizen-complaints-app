@@ -21,7 +21,7 @@ export const Settings: React.FC = () => {
       setFormData({
         fullName: profile.fullName || '',
         email: profile.email || '',
-        phoneNumber: profile.phoneNumber || '',
+        phoneNumber: (profile as any).phoneNumber ?? '',
         city: profile.city || ''
       });
     }

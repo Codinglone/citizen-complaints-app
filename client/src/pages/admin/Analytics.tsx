@@ -280,7 +280,6 @@ export const Analytics: React.FC = () => {
                   data={sentimentData}
                 >
                   <RadialBar
-                    minAngle={15}
                     label={{ position: 'insideStart', fill: '#fff' }}
                     background
                     clockWise

@@ -87,7 +87,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                 <div className="w-10 rounded-full">
-                  <ProfileAvatar profile={displayUser} />
+                  <ProfileAvatar profile={{ ...displayUser, profileImage: displayUser?.profileImage ?? undefined }} />
                 </div>
               </label>
               <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-52">
@@ -145,7 +145,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
               <div className="flex items-center">
                 <div className="avatar mr-3">
                   <div className="w-10 rounded-full">
-                    <ProfileAvatar profile={displayUser} />
+                    <ProfileAvatar profile={{ ...displayUser, profileImage: displayUser?.profileImage ?? undefined }} />
                   </div>
                 </div>
                 <div>

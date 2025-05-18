@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 
 const axiosWithAuth = axios.create({
   baseURL: '/api'
@@ -6,7 +6,7 @@ const axiosWithAuth = axios.create({
 
 // Log HTTP requests (helpful for debugging)
 axiosWithAuth.interceptors.request.use(
-  config => {
+  (config: AxiosRequestConfig) => {
     // Get the token from localStorage or wherever you store it
     const token = localStorage.getItem('auth_token');
     
@@ -15,12 +15,13 @@ axiosWithAuth.interceptors.request.use(
     
     if (token) {
       // Set the authorization header with the token
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers = config.headers || {};
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
     
     return config;
   },
-  error => {
+  (error: AxiosError) => {
     console.error('Request error:', error);
     return Promise.reject(error);
   }
@@ -32,7 +33,7 @@ axiosWithAuth.interceptors.response.use(
     console.log('Response Status:', response.status);
     return response;
   },
-  error => {
+  (error: AxiosError) => {
     console.error('Response error:', error.response?.status, error.response?.data);
     
     // Handle token expiration or authentication issues
