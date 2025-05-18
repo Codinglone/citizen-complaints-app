@@ -7,6 +7,7 @@ import { DashboardHome } from './dashboard/DashboardHome';
 import { MyComplaints } from './dashboard/MyComplaints';
 import { SubmitComplaint } from './SubmitComplaint';
 import { Settings } from './dashboard/Settings';
+import { Analytics } from './dashboard/Analytics';
 
 export const UserDashboard: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ export const UserDashboard: React.FC = () => {
           <Route path="complaints" element={<MyComplaints />} />
           <Route path="submit" element={<SubmitComplaint />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="analytics" element={<Analytics />} />
         </Route>
       </Route>
     </Routes>

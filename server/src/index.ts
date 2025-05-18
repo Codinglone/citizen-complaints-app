@@ -9,6 +9,10 @@ import requestExtensionsPlugin from './plugins/requestExtensions';
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { Auth0User } from './types/auth0';
+import "reflect-metadata";
+import { config } from "dotenv";
+
+config();
 
 // Create fastify server
 export const buildApp = async (options: FastifyServerOptions = {}) => {
@@ -111,8 +115,8 @@ export const buildApp = async (options: FastifyServerOptions = {}) => {
   return server;
 };
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-const HOST = process.env.HOST || '0.0.0.0';
+const PORT = parseInt(process.env.PORT || "3001", 10);
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 async function startServer() {
   try {
@@ -123,11 +127,23 @@ async function startServer() {
     // Build the Fastify app
     const server = await buildApp();
 
+    // Configure CORS based on environment
+    const allowedOrigins = NODE_ENV === "production" 
+      ? [process.env.FRONTEND_URL, process.env.NGROK_URL].filter(Boolean)
+      : ["http://localhost:3000"];
+
+    server.register(require("@fastify/cors"), {
+      origin: allowedOrigins,
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    });
+
     // Start listening
-    await server.listen({ port: PORT, host: HOST });
+    await server.listen({ port: PORT, host: "0.0.0.0" });
     
-    console.log(`Server is running on http://${HOST}:${PORT}`);
-    console.log(`Swagger documentation available at http://${HOST}:${PORT}/api-docs`);
+    console.log(`Server running on port ${PORT} in ${NODE_ENV} mode`);
+    console.log(`Swagger documentation available at http://0.0.0.0:${PORT}/api-docs`);
   } catch (err) {
     console.error('Error starting server:', err);
     process.exit(1);

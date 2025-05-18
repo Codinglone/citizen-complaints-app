@@ -132,6 +132,31 @@ const enResources = {
         other: "Other",
       },
     },
+    analytics: {
+      title: "Analytics Dashboard",
+      timeRanges: {
+        week: "Last Week",
+        month: "Last Month",
+        quarter: "Last Quarter",
+        year: "Last Year"
+      },
+      metrics: {
+        totalComplaints: "Total Complaints",
+        resolvedComplaints: "Resolved Complaints",
+        averageResolutionTime: "Avg. Resolution Time",
+        satisfactionRate: "Satisfaction Rate"
+      },
+      charts: {
+        complaintsOverTime: "Complaints Over Time",
+        categoryDistribution: "Category Distribution",
+        statusDistribution: "Status Distribution"
+      },
+      topAgencies: "Top Performing Agencies",
+      agency: "Agency",
+      complaintsHandled: "Complaints Handled",
+      resolutionRate: "Resolution Rate",
+      averageResolutionTime: "Avg. Resolution Time"
+    },
     theme: {
       change: "Change Theme",
     },
@@ -298,6 +323,31 @@ const frResources = {
         noise: "Pollution Sonore",
         other: "Autre",
       },
+    },
+    analytics: {
+      title: "Analytics Dashboard",
+      timeRanges: {
+        week: "Last Week",
+        month: "Last Month",
+        quarter: "Last Quarter",
+        year: "Last Year"
+      },
+      metrics: {
+        totalComplaints: "Total Complaints",
+        resolvedComplaints: "Resolved Complaints",
+        averageResolutionTime: "Avg. Resolution Time",
+        satisfactionRate: "Satisfaction Rate"
+      },
+      charts: {
+        complaintsOverTime: "Complaints Over Time",
+        categoryDistribution: "Category Distribution",
+        statusDistribution: "Status Distribution"
+      },
+      topAgencies: "Top Performing Agencies",
+      agency: "Agency",
+      complaintsHandled: "Complaints Handled",
+      resolutionRate: "Resolution Rate",
+      averageResolutionTime: "Avg. Resolution Time"
     },
     theme: {
       change: "Changer de Thème",
