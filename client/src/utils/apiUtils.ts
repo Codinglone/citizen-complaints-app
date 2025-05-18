@@ -45,7 +45,7 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}, toke
 };
 
 export function addAuthHeader(config: AxiosRequestConfig, token: string): AxiosRequestConfig {
-  config.headers = (config.headers as Record<string, string>) || {};
-  config.headers['Authorization'] = `Bearer ${token}`;
-  return config;
+  const headers = config.headers as Record<string, string> || {};
+  headers['Authorization'] = `Bearer ${token}`;
+  return { ...config, headers };
 }

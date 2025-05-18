@@ -22,7 +22,7 @@ export const Settings: React.FC = () => {
         fullName: profile.fullName || '',
         email: profile.email || '',
         phoneNumber: (profile as any).phoneNumber ?? '',
-        city: profile.city || ''
+        city:  ''
       });
     }
   }, [profile]);

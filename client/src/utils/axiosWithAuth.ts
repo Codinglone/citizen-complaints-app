@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios';
+import axios from 'axios';
+import type { AxiosRequestConfig, AxiosError } from 'axios';
 
 const axiosWithAuth = axios.create({
   baseURL: '/api'
@@ -7,7 +8,6 @@ const axiosWithAuth = axios.create({
 // Log HTTP requests (helpful for debugging)
 axiosWithAuth.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    // Get the token from localStorage or wherever you store it
     const token = localStorage.getItem('auth_token');
     
     console.log('Request URL:', config.url);
@@ -26,7 +26,6 @@ axiosWithAuth.interceptors.request.use(
   }
 );
 
-// Log HTTP responses
 axiosWithAuth.interceptors.response.use(
   response => {
     console.log('Response Status:', response.status);
@@ -34,11 +33,9 @@ axiosWithAuth.interceptors.response.use(
   },
   (error: AxiosError) => {
     console.error('Response error:', error.response?.status, error.response?.data);
-    
     if (error.response?.status === 401) {
       console.log('Authentication error - redirecting to login');
     }
-    
     return Promise.reject(error);
   }
 );
