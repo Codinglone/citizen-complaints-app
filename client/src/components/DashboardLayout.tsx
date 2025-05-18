@@ -21,6 +21,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
   const { profile } = useProfile();
   const [drawerOpen, setDrawerOpen] = useState(false);
   
+  // Default avatar for users/admins without one
+  const DEFAULT_AVATAR = 'https://avatar.iran.liara.run/public/31';
+  
   // Determine which links to show based on whether this is the admin or user dashboard
   const navLinks = isAdmin
     ? [
@@ -52,17 +55,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
     i18n.changeLanguage(newLang);
   };
 
-  // Use appropriate user data based on whether we're in admin or user dashboard
+  // pick adminUser or profile
   const displayUser = isAdmin ? adminUser : profile;
-
-  // Assume Profile type requires: id, fullName, email, and optionally profileImage.
+  
+  // map to Profile, ensuring profileImage is always a string
   const completeUser: Profile | null = displayUser
     ? {
         id: displayUser.id,
         fullName: displayUser.fullName,
         email: displayUser.email,
         role: displayUser.role,
-        profileImage: displayUser.profileImage ?? undefined
+        // if no image in DB, use default
+        profileImage: displayUser.profileImage ?? DEFAULT_AVATAR
       }
     : null;
 
