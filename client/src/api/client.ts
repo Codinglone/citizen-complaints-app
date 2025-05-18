@@ -5,7 +5,7 @@ import config from "../config";
 console.log("API Client initialized with base URL:", config.apiUrl);
 
 const apiClient = axios.create({
-  baseURL: config.apiUrl,
+  baseURL: process.env.NODE_ENV === "production" ? process.env.VITE_API_URL : config.apiUrl,
   headers: {
     "Content-Type": "application/json",
   },

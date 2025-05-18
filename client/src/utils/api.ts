@@ -1,4 +1,5 @@
 import { useAuth } from '../hooks/useAuth';
+import config from '../config';
 
 interface RequestOptions extends RequestInit {
   requireAuth?: boolean;
@@ -30,7 +31,12 @@ export const useApi = () => {
       headers['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(url, {
+    // Construct the full URL - combine the API base URL with the endpoint
+    // If the URL already starts with http or https, use it as is
+    const fullUrl = url.startsWith('http') ? url : `${config.apiUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+    console.log('Making API request to:', fullUrl);
+
+    const response = await fetch(fullUrl, {
       ...fetchOptions,
       headers
     });

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useApi } from '../utils/api'; // Changed from '../hooks/useApi'
 
 export const AdminLogin: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { fetchWithAuth } = useApi();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,17 +18,13 @@ export const AdminLogin: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetchWithAuth('/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password })
       });
       
-      const data = await response.json();
-      
       if (response.ok) {
+        const data = await response.json();
         // Save token and user data in localStorage
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.user));
@@ -34,7 +32,10 @@ export const AdminLogin: React.FC = () => {
         // Redirect to admin dashboard
         navigate('/admin');
       } else {
-        setError(data.error || t('adminLogin.genericError'));
+        // Better error handling
+        const errorText = await response.text();
+        console.error('Login failed:', response.status, errorText);
+        setError(t('adminLogin.genericError'));
       }
     } catch (error) {
       console.error('Login error:', error);

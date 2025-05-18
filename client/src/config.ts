@@ -4,24 +4,23 @@ const getApiUrl = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     if (!apiUrl) {
       console.error("VITE_API_URL is not set in production!");
-      return "https://citizen-complaints-app.onrender.com/api"; // Fallback for development
+      return "https://citizen-complaints-app.onrender.com/api"; // Fallback for production
     }
-    console.log("Using production API URL:", apiUrl);
     return apiUrl;
   }
-  // In development, use the proxy
-  console.log("Using development API URL with proxy");
-  return ""; // Empty string means use relative URLs, which will be handled by the Vite proxy
+  
+  // In development, use the environment variable or a localhost fallback
+  const devApiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+  console.log("Using development API URL:", devApiUrl);
+  return devApiUrl; // Don't use empty string, use actual API URL
 };
 
 const getCallbackUrl = () => {
   if (typeof window !== 'undefined') {
     const origin = window.location.origin;
-    console.log("Using callback URL from window origin:", origin);
     return origin;
   }
   const fallback = import.meta.env.VITE_AUTH0_CALLBACK_URL || 'http://localhost:5173';
-  console.log("Using fallback callback URL:", fallback);
   return fallback;
 };
 
@@ -54,4 +53,4 @@ if (import.meta.env.DEV) {
   });
 }
 
-export default config; 
+export default config;

@@ -118,6 +118,7 @@ export const buildApp = async (options: FastifyServerOptions = {}) => {
       const allowedOrigins = [
         'http://localhost:5173',
         'http://localhost:3000',
+        'https://citizen-complaints-app.onrender.com/api-docs',
         'https://citizen-complaints-app.vercel.app',
         // Add your Vercel preview URLs here
         /\.vercel\.app$/
