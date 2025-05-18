@@ -1,6 +1,9 @@
 import axios from "axios";
 import config from "../config";
 
+// Log the base URL being used
+console.log("API Client initialized with base URL:", config.apiUrl);
+
 const apiClient = axios.create({
   baseURL: config.apiUrl,
   headers: {
@@ -25,6 +28,10 @@ apiClient.interceptors.request.use(
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Log the full request URL
+    console.log(`Full request URL: ${config.baseURL}${config.url}`);
+    
     return config;
   },
   (error) => {
@@ -46,6 +53,8 @@ apiClient.interceptors.response.use(
     // Log error details
     console.error("API Error:", {
       url: error.config?.url,
+      baseURL: error.config?.baseURL,
+      fullUrl: `${error.config?.baseURL}${error.config?.url}`,
       status: error.response?.status,
       data: error.response?.data,
       message: error.message

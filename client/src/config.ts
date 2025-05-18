@@ -6,17 +6,23 @@ const getApiUrl = () => {
       console.error("VITE_API_URL is not set in production!");
       return "http://localhost:3001"; // Fallback for development
     }
+    console.log("Using production API URL:", apiUrl);
     return apiUrl;
   }
   // In development, use localhost
+  console.log("Using development API URL: http://localhost:3001");
   return "http://localhost:3001";
 };
 
 const getCallbackUrl = () => {
   if (typeof window !== 'undefined') {
-    return window.location.origin;
+    const origin = window.location.origin;
+    console.log("Using callback URL from window origin:", origin);
+    return origin;
   }
-  return import.meta.env.VITE_AUTH0_CALLBACK_URL || 'http://localhost:3000';
+  const fallback = import.meta.env.VITE_AUTH0_CALLBACK_URL || 'http://localhost:3000';
+  console.log("Using fallback callback URL:", fallback);
+  return fallback;
 };
 
 const config = {
@@ -31,8 +37,21 @@ const config = {
 
 // Log configuration in development
 if (import.meta.env.DEV) {
-  console.log("API URL:", config.apiUrl);
-  console.log("Callback URL:", config.auth0.redirectUri);
+  console.log("Development Configuration:", {
+    apiUrl: config.apiUrl,
+    callbackUrl: config.auth0.redirectUri,
+    auth0Domain: config.auth0.domain,
+    auth0ClientId: config.auth0.clientId,
+    auth0Audience: config.auth0.audience,
+  });
+} else {
+  console.log("Production Configuration:", {
+    apiUrl: config.apiUrl,
+    callbackUrl: config.auth0.redirectUri,
+    auth0Domain: config.auth0.domain ? "Set" : "Not Set",
+    auth0ClientId: config.auth0.clientId ? "Set" : "Not Set",
+    auth0Audience: config.auth0.audience ? "Set" : "Not Set",
+  });
 }
 
 export default config; 
