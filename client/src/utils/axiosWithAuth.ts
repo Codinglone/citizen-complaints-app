@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const axiosWithAuth = axios.create({
-  baseURL: '/api'
+  baseURL: '/api',
+  withCredentials: true      // <— send cookies/auth headers
 });
 
 // Log HTTP requests
@@ -10,7 +11,7 @@ axiosWithAuth.interceptors.request.use(
     const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers = config.headers || {};
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -22,22 +23,5 @@ axiosWithAuth.interceptors.response.use(
   response => response,
   (error: any) => Promise.reject(error)
 );
-
-// export const fetchWithAuth = async (
-//   url: string,
-//   options: RequestInit = {},
-//   token?: string | null
-// ) => {
-//   // ...
-// };
-
-export function addAuthHeader(
-  config: any,      // drop AxiosRequestConfig
-  token: string
-): any {            // drop AxiosRequestConfig
-  const headers = (config.headers as Record<string, string>) || {};
-  headers["Authorization"] = `Bearer ${token}`;
-  return { ...config, headers };
-}
 
 export default axiosWithAuth;

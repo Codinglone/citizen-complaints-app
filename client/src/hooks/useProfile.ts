@@ -1,91 +1,81 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth0 } from '@auth0/auth0-react';
 
-interface Profile {
+export interface Profile {
   id: string;
   fullName: string;
   email: string;
-  profileImage?: string;
-  role?: string;
+  profileImage: string; // make required
+  role: string;
 }
 
-export const useProfile = () => {
+export function useProfile() {
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const { isAuthenticated, user, getToken } = useAuth();
+
+  // wherever you’d like, define your default:
+  const DEFAULT_AVATAR = 'https://avatar.iran.liara.run/public/31';
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!isAuthenticated || !user) {
-        setProfile(null);
-        return;
-      }
+    if (!isAuthenticated) {
+      setProfile(null);
+      return;
+    }
+    let mounted = true;
 
+    (async () => {
       try {
-        // First, try to get detailed profile from our backend
-        const token = await getToken();
-        
-        if (!token) {
-          // If token acquisition fails, use basic Auth0 profile
-          setProfile({
-            id: user.id,
-            fullName: user.fullName,
-            email: user.email,
-            profileImage: user.picture,
-            role: user.role
-          });
-          console.log("Using Auth0 profile (no token):", {
-            id: user.id,
-            fullName: user.fullName,
-            email: user.email,
-            profileImage: user.picture
-          });
-          return;
-        }
-        
-        const response = await fetch('/api/profile', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const token = await getAccessTokenSilently();
+        const res = await fetch('/api/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include'
         });
-        
-        if (response.ok) {
-          const profileData = await response.json();
-          console.log("API profile data:", profileData);
-          setProfile({
-            ...profileData,
-            profileImage: profileData.profileImage || user.picture
-          });
-        } else {
-          // If backend fetch fails, fallback to basic Auth0 profile
-          console.log("API fetch failed, using fallback profile");
-          setProfile({
-            id: user.id,
-            fullName: user.fullName,
-            email: user.email,
-            profileImage: user.picture || 'https://avatar.iran.liara.run/public/31',
-            role: user.role
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        
-        // Use basic Auth0 profile as fallback
-        if (user) {
-          setProfile({
-            id: user.id,
-            fullName: user.fullName,
-            email: user.email,
-            profileImage: user.picture || 'https://avatar.iran.liara.run/public/31',
-            role: user.role
-          });
-        } else {
-          setProfile(null);
-        }
-      }
-    };
 
-    fetchProfile();
-  }, [isAuthenticated, user, getToken]);
+        if (!mounted) return;
+        if (res.ok) {
+          const data = await res.json();
+          const newProfile: Profile = {
+            ...data,
+            // FALLBACK CHAIN:
+            profileImage:
+              data.profileImage ?? user?.picture ?? DEFAULT_AVATAR,
+            id: data.id,
+            fullName: data.fullName,
+            email: data.email,
+            role: data.role
+          };
+          setProfile(prev =>
+            JSON.stringify(prev) !== JSON.stringify(newProfile)
+              ? newProfile
+              : prev
+          );
+        } else {
+          // fallback entirely to Auth0 + default avatar
+          setProfile({
+            id: user?.sub || '',
+            fullName: user?.name || '',
+            email: user?.email || '',
+            profileImage: user?.picture ?? DEFAULT_AVATAR,
+            role: 'citizen'
+          });
+        }
+      } catch (err) {
+        if (!mounted) return;
+        console.error('Error fetching profile:', err);
+        setProfile({
+          id: user?.sub || '',
+          fullName: user?.name || '',
+          email: user?.email || '',
+          profileImage: user?.picture ?? DEFAULT_AVATAR,
+          role: 'citizen'
+        });
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [isAuthenticated]); // only re-run when auth state changes
 
   return { profile };
-};
+}

@@ -21,10 +21,16 @@ export const ProfileAvatar: React.FC<ProfileAvatarProps> = ({ profile }) => {
   console.log("Avatar URL:", avatarUrl);
 
   return (
-    <img 
-      src={avatarUrl} 
-      alt={profile?.fullName || 'User'} 
-      className="w-full h-full rounded-full object-cover"
-    />
+    <div>
+      {/* always render the <img> with avatarUrl */}
+      <img
+        src={avatarUrl}
+        alt={profile?.fullName || 'User avatar'}
+        style={{ width: 40, height: 40, borderRadius: '50%' }}
+      />
+      {/* then name/role beneath */}
+      <div>{profile?.fullName}</div>
+      <small>Role: {profile?.role}</small>
+    </div>
   );
 };
