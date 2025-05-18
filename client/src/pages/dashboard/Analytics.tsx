@@ -146,7 +146,7 @@ export const Analytics: React.FC = () => {
                     outerRadius={80}
                     label
                   >
-                    {metrics.categoryDistribution.map((entry, index) => (
+                    {metrics.categoryDistribution.map((index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
