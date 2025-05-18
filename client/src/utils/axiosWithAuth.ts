@@ -23,13 +23,13 @@ axiosWithAuth.interceptors.response.use(
   (error: any) => Promise.reject(error)
 );
 
-export const fetchWithAuth = async (
-  url: string,
-  options: RequestInit = {},
-  token?: string | null
-) => {
-  // ...
-};
+// export const fetchWithAuth = async (
+//   url: string,
+//   options: RequestInit = {},
+//   token?: string | null
+// ) => {
+//   // ...
+// };
 
 export function addAuthHeader(
   config: any,      // drop AxiosRequestConfig
