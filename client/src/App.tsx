@@ -11,6 +11,7 @@ import { AdminLogin } from './pages/AdminLogin';
 import { UserDashboard } from './pages/UserDashboard';
 import { SubmitComplaint } from './pages/SubmitComplaint';
 import { SubmitComplaintForm } from './pages/SubmitComplaintForm';
+import { ApiTest } from './pages/ApiTest';
 import './i18n';
 
 // Add a simple callback component
@@ -98,6 +99,7 @@ const App: React.FC = () => {
           <Route path="/submit-complaint" element={<SubmitComplaint />} />
           <Route path="/submit-complaint-form" element={<SubmitComplaintForm />} />
           <Route path="/callback" element={<AuthCallback />} />
+          <Route path="/api-test" element={<ApiTest />} />
         </Routes>
       </div>
     </Router>

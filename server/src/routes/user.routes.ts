@@ -5,6 +5,11 @@ import { AppDataSource } from '../data-source';
 import { User } from '../entities/User';
 
 export function registerUserRoutes(server: FastifyInstance) {
+  // Health check
+  server.get('/api/health', async (request, reply) => {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  });
+  
   // Get all users (admin only)
   server.get('/api/users', {
     schema: {

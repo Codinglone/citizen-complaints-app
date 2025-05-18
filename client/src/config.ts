@@ -1,18 +1,16 @@
 const getApiUrl = () => {
-  // In production, use the environment variable
-  if (import.meta.env.PROD) {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    if (!apiUrl) {
-      console.error("VITE_API_URL is not set in production!");
-      return "https://citizen-complaints-app.onrender.com/api"; // Fallback for production
-    }
-    return apiUrl;
+  // Use the environment variable in both development and production
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
+  if (!apiUrl) {
+    console.error("VITE_API_URL is not set! Using fallback URL.");
+    return import.meta.env.PROD 
+      ? "https://citizen-complaints-app.onrender.com/api" 
+      : "http://localhost:5000/api";
   }
   
-  // In development, use the environment variable or a localhost fallback
-  const devApiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
-  console.log("Using development API URL:", devApiUrl);
-  return devApiUrl; // Don't use empty string, use actual API URL
+  console.log(`Using API URL: ${apiUrl}`);
+  return apiUrl;
 };
 
 const getCallbackUrl = () => {
@@ -35,7 +33,7 @@ const config = {
 };
 
 // Log configuration in development
-if (import.meta.env.DEV) {
+if (import.meta.env.NODE_ENV === "development") {
   console.log("Development Configuration:", {
     apiUrl: config.apiUrl,
     callbackUrl: config.auth0.redirectUri,
