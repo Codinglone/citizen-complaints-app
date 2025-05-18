@@ -9,7 +9,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://citizen-complaints-app.onrender.com/api',
         changeOrigin: true,
         secure: false,
         // Don't rewrite the path, keep /api prefix
