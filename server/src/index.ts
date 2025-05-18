@@ -11,6 +11,7 @@ import jwksClient from 'jwks-rsa';
 import { Auth0User } from './types/auth0';
 import "reflect-metadata";
 import { config } from "dotenv";
+import fastifyCors from '@fastify/cors';
 
 config();
 
@@ -111,6 +112,41 @@ export const buildApp = async (options: FastifyServerOptions = {}) => {
     });
   });
   
+  // Register CORS
+  await server.register(fastifyCors, {
+    origin: (origin, cb) => {
+      const allowedOrigins = [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'https://citizen-complaints-app.vercel.app',
+        // Add your Vercel preview URLs here
+        /\.vercel\.app$/
+      ];
+      
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) {
+        return cb(null, true);
+      }
+      
+      // Check if origin is allowed
+      const isAllowed = allowedOrigins.some(allowed => {
+        if (allowed instanceof RegExp) {
+          return allowed.test(origin);
+        }
+        return allowed === origin;
+      });
+      
+      if (isAllowed) {
+        cb(null, true);
+      } else {
+        cb(new Error('Not allowed by CORS'), false);
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+  
   // Register routes
   registerRoutes(server);
   
@@ -128,33 +164,6 @@ async function startServer() {
 
     // Build the Fastify app
     const server = await buildApp();
-
-    // Configure CORS based on environment
-    const allowedOrigins = NODE_ENV === "production" 
-      ? [process.env.FRONTEND_URL, process.env.NGROK_URL].filter(Boolean)
-      : ["http://localhost:5173"];
-
-    console.log('Allowed origins:', allowedOrigins);
-
-    server.register(require("@fastify/cors"), {
-      origin: (origin, cb) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return cb(null, true);
-        
-        if (allowedOrigins.includes(origin)) {
-          cb(null, true);
-          return;
-        }
-        
-        // Log rejected origins for debugging
-        console.log('Rejected origin:', origin);
-        cb(new Error('Not allowed by CORS'), false);
-      },
-      credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-      exposedHeaders: ["Content-Type", "Authorization"],
-    });
 
     // Add error handler
     server.setErrorHandler((error, request, reply) => {

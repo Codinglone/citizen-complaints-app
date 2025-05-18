@@ -13,11 +13,14 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // Log request in development
-    if (process.env.NODE_ENV !== "production") {
+    if (import.meta.env.DEV) {
       console.log(`Making ${config.method?.toUpperCase()} request to:`, config.url);
     }
 
-    const token = localStorage.getItem("token");
+    // Get the appropriate token based on the route
+    const isAdminRoute = config.url?.includes('/admin');
+    const token = localStorage.getItem(isAdminRoute ? 'adminToken' : 'token');
+    
     if (token) {
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
@@ -34,7 +37,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     // Log successful response in development
-    if (process.env.NODE_ENV !== "production") {
+    if (import.meta.env.DEV) {
       console.log(`Response from ${response.config.url}:`, response.status);
     }
     return response;
@@ -50,13 +53,14 @@ apiClient.interceptors.response.use(
 
     if (error.response?.status === 401) {
       // Handle unauthorized access
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+      const isAdminRoute = error.config?.url?.includes('/admin');
+      localStorage.removeItem(isAdminRoute ? 'adminToken' : 'token');
+      window.location.href = isAdminRoute ? '/admin/login' : '/login';
     }
 
     // Return a more detailed error
     return Promise.reject({
-      message: error.response?.data?.message || error.message,
+      message: error.response?.data?.error || error.response?.data?.message || error.message,
       status: error.response?.status,
       data: error.response?.data
     });
