@@ -1,9 +1,3 @@
-// import axios from 'axios';
-import type { AxiosRequestConfig } from 'axios';
-
-/**
- * Enhanced fetch function with better error handling and debugging
- */
 export const fetchWithAuth = async (url: string, options: RequestInit = {}, token?: string | null) => {
   // Add debugging information
   console.log(`🔍 API Request: ${options.method || 'GET'} ${url}`);
