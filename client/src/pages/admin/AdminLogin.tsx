@@ -29,10 +29,13 @@ export const AdminLogin: React.FC = () => {
     setIsLoading(true);
     
     try {
+      console.log('Attempting admin login with email:', email);
       const response = await apiClient.post<LoginResponse>('/api/auth/login', {
         email,
         password,
       });
+      
+      console.log('Login response:', response.data);
       
       if (response.data.success) {
         // Save token and user data in localStorage
@@ -46,7 +49,13 @@ export const AdminLogin: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Login error:', err);
-      setError(err.response?.data?.error || t('adminLogin.networkError'));
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError(t('adminLogin.networkError'));
+      }
     } finally {
       setIsLoading(false);
     }
