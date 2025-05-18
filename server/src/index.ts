@@ -132,7 +132,7 @@ async function startServer() {
     // Configure CORS based on environment
     const allowedOrigins = NODE_ENV === "production" 
       ? [process.env.FRONTEND_URL, process.env.NGROK_URL].filter(Boolean)
-      : ["http://localhost:3000"];
+      : ["http://localhost:5173"];
 
     console.log('Allowed origins:', allowedOrigins);
 

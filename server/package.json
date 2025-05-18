@@ -37,6 +37,7 @@
       "create-admin": "ts-node src/seeds/create-admin.ts",
       "create-agencies": "ts-node src/seeds/create-agencies.ts",
       "create-categories": "ts-node src/seeds/create-categories.ts",
-      "seed-all": "npm run create-admin && npm run create-agencies && npm run create-categories"
+      "seed-all": "npm run create-admin && npm run create-agencies && npm run create-categories",
+      "seed": "ts-node src/seeds/create-admin.ts"
    }
 }
