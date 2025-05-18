@@ -60,7 +60,9 @@ export const Settings: React.FC = () => {
             <div>
               <h3 className="text-xl font-bold">{profile?.fullName}</h3>
               <p className="text-sm opacity-70">{profile?.email}</p>
-              <div className="badge badge-primary mt-2">{profile?.role || t('role.citizen')}</div>
+              <div className="badge badge-primary mt-2">
+                {profile?.role || t('role.citizen')}
+              </div>
             </div>
           </div>
           

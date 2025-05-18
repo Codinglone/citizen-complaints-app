@@ -92,11 +92,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
                 <div className="w-10 rounded-full">
                   {/* Use completeUser only when available */}
                   {completeUser && (
-                    <ProfileAvatar profile={{ 
-                      ...completeUser, 
-                      // Ensure profileImage is undefined instead of null
-                      profileImage: completeUser.profileImage ?? undefined 
-                    }} />
+                    <ProfileAvatar
+                      profile={completeUser}
+                      showDetails
+                    />
                   )}
                 </div>
               </label>
@@ -157,11 +156,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
                   <div className="w-10 rounded-full">
                     {/* Use completeUser only when available */}
                     {completeUser && (
-                      <ProfileAvatar profile={{ 
-                        ...completeUser, 
-                        // Ensure profileImage is undefined instead of null
-                        profileImage: completeUser.profileImage ?? undefined 
-                      }} />
+                      <ProfileAvatar
+                        profile={completeUser}
+                        showDetails
+                      />
                     )}
                   </div>
                 </div>
