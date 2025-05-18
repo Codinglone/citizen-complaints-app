@@ -33,7 +33,7 @@ export const useAdminAuth = () => {
         const user: AdminUser = JSON.parse(storedUser);
         
         // Verify the token with the server
-        const response = await fetch(`${process.env.VITE_API_URL}/auth/verify`, {
+        const response = await fetch(`$/api/auth/verify`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

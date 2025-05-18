@@ -4,7 +4,7 @@ const getApiUrl = () => {
   
   if (!apiUrl) {
     console.error("VITE_API_URL is not set! Using fallback URL.");
-    return import.meta.env.PROD 
+    return import.meta.env.NODE_ENV === "production" 
       ? "https://citizen-complaints-app.onrender.com/api" 
       : "http://localhost:5000/api";
   }
