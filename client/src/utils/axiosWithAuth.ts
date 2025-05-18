@@ -4,36 +4,40 @@ const axiosWithAuth = axios.create({
   baseURL: '/api'
 });
 
-// Log HTTP requests (helpful for debugging)
+// Log HTTP requests
 axiosWithAuth.interceptors.request.use(
-  (config: import('axios').AxiosRequestConfig) => {
+  (config: any) => {
     const token = localStorage.getItem('auth_token');
-    console.log('Request URL:', config.url);
-    console.log('Auth Token Present:', !!token);
     if (token) {
       config.headers = config.headers || {};
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
-  (error: import('axios').AxiosError) => {
-    console.error('Request error:', error);
-    return Promise.reject(error);
-  }
+  (error: any) => Promise.reject(error)
 );
 
+// Log HTTP responses
 axiosWithAuth.interceptors.response.use(
-  response => {
-    console.log('Response Status:', response.status);
-    return response;
-  },
-  (error: import('axios').AxiosError) => {
-    console.error('Response error:', error.response?.status, error.response?.data);
-    if (error.response?.status === 401) {
-      console.log('Authentication error - redirecting to login');
-    }
-    return Promise.reject(error);
-  }
+  response => response,
+  (error: any) => Promise.reject(error)
 );
+
+export const fetchWithAuth = async (
+  url: string,
+  options: RequestInit = {},
+  token?: string | null
+) => {
+  // ...
+};
+
+export function addAuthHeader(
+  config: any,      // drop AxiosRequestConfig
+  token: string
+): any {            // drop AxiosRequestConfig
+  const headers = (config.headers as Record<string, string>) || {};
+  headers["Authorization"] = `Bearer ${token}`;
+  return { ...config, headers };
+}
 
 export default axiosWithAuth;

@@ -50,9 +50,9 @@ export const fetchWithAuth = async (
 };
 
 export function addAuthHeader(
-  config: import('axios').AxiosRequestConfig,
+  config: any, // dropped AxiosRequestConfig
   token: string
-): import('axios').AxiosRequestConfig {
+): any { // dropped AxiosRequestConfig
   const headers = (config.headers as Record<string, string>) || {};
   headers["Authorization"] = `Bearer ${token}`;
   return { ...config, headers };
