@@ -6,6 +6,7 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useTheme } from '../hooks/useTheme';
 import { useProfile } from '../hooks/useProfile';
 import { ProfileAvatar } from './ProfileAvatar';
+import type { Profile } from '../hooks/useProfile';
 
 interface DashboardLayoutProps {
   isAdmin: boolean;
@@ -55,7 +56,15 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
   const displayUser = isAdmin ? adminUser : profile;
 
   // Assume Profile type requires: id, fullName, email, and optionally profileImage.
-  const completeUser = displayUser && 'id' in displayUser ? displayUser : null;
+  const completeUser: Profile | null = displayUser
+    ? {
+        id: displayUser.id,
+        fullName: displayUser.fullName,
+        email: displayUser.email,
+        role: displayUser.role,
+        profileImage: displayUser.profileImage ?? undefined
+      }
+    : null;
 
   return (
     <div className={`drawer lg:drawer-open ${theme}`}>
