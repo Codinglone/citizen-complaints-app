@@ -1,4 +1,4 @@
-import axios, { type AxiosRequestConfig, type AxiosError } from 'axios';
+import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 
 const axiosWithAuth = axios.create({
   baseURL: '/api'

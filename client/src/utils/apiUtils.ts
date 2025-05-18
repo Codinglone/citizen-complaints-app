@@ -1,3 +1,5 @@
+import type { AxiosRequestConfig } from 'axios';
+
 /**
  * Enhanced fetch function with better error handling and debugging
  */
@@ -41,3 +43,9 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}, toke
     throw error;
   }
 };
+
+export function addAuthHeader(config: AxiosRequestConfig, token: string): AxiosRequestConfig {
+  config.headers = (config.headers as Record<string, string>) || {};
+  config.headers['Authorization'] = `Bearer ${token}`;
+  return config;
+}
