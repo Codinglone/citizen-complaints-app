@@ -1,3 +1,4 @@
+// import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 
 /**
@@ -8,7 +9,9 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}, toke
   console.log(`🔍 API Request: ${options.method || 'GET'} ${url}`);
   
   // Add auth header if token is provided
-  const headers = config.headers as Record<string, string>;
+  const headers: Record<string, string> = {
+    ...(options.headers as Record<string, string>),
+  };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
     console.log('🔑 Using auth token');
@@ -44,7 +47,10 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}, toke
   }
 };
 
-export function addAuthHeader(config: AxiosRequestConfig, token: string): AxiosRequestConfig {
+export function addAuthHeader(
+  config: import('axios').AxiosRequestConfig,
+  token: string
+): import('axios').AxiosRequestConfig {
   const headers = config.headers as Record<string, string> || {};
   headers['Authorization'] = `Bearer ${token}`;
   return { ...config, headers };
