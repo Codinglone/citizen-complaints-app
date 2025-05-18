@@ -22,6 +22,9 @@ export class Complaint {
   description: string;
 
   @Column({ nullable: true })
+  location: string;
+
+  @Column({ nullable: true })
   sentimentScore: number;
 
   @Column({ nullable: true })
@@ -30,10 +33,22 @@ export class Complaint {
   @Column({ default: "pending" })
   status: string;
 
-  @ManyToOne(() => User, (user) => user.complaints)
+  @Column({ default: "medium" })
+  priority: string;
+
+  @Column({ nullable: true })
+  trackingCode: string;
+
+  @Column({ nullable: true })
+  contactEmail: string;
+
+  @Column({ nullable: true })
+  contactPhone: string;
+
+  @ManyToOne(() => User, (user) => user.complaints, { nullable: true })
   user: User;
 
-  @ManyToOne(() => Agency, (agency) => agency.complaints)
+  @ManyToOne(() => Agency, (agency) => agency.complaints, { nullable: true })
   agency: Agency;
 
   @ManyToOne(() => Category, (category) => category.complaints)

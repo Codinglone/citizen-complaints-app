@@ -1,6 +1,8 @@
 import { FastifyInstance, FastifyServerOptions } from 'fastify';
 import fastify from 'fastify';
 import fastifyJwt from '@fastify/jwt';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 import { AppDataSource } from './data-source';
 import { registerRoutes } from './routes';
 import requestExtensionsPlugin from './plugins/requestExtensions';
@@ -9,11 +11,56 @@ import jwksClient from 'jwks-rsa';
 import { Auth0User } from './types/auth0';
 
 // Create fastify server
-const buildServer = (options: FastifyServerOptions = {}) => {
+export const buildApp = async (options: FastifyServerOptions = {}) => {
   const server: FastifyInstance = fastify(options);
   
   // Register the request extensions plugin
   server.register(requestExtensionsPlugin);
+  
+  // Register Swagger plugins
+  await server.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: 'Citizen Complaints API',
+        description: 'API for managing citizen complaints and suggestions',
+        version: '1.0.0',
+        contact: {
+          name: 'API Support',
+          email: 'support@example.com'
+        }
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            description: 'Enter JWT token'
+          }
+        }
+      },
+      tags: [
+        { name: 'Auth', description: 'Authentication endpoints' },
+        { name: 'Complaints', description: 'Complaint management endpoints' },
+        { name: 'Categories', description: 'Category endpoints' },
+        { name: 'Agencies', description: 'Agency endpoints' },
+        { name: 'Users', description: 'User management endpoints' },
+        { name: 'Admin', description: 'Admin endpoints' }
+      ]
+    }
+  });
+
+  await server.register(fastifySwaggerUi, {
+    routePrefix: '/api-docs',
+    uiConfig: {
+      docExpansion: 'list',
+      deepLinking: false,
+      displayRequestDuration: true,
+      filter: true
+    },
+    staticCSP: true,
+    transformStaticCSP: (header) => header
+  });
   
   // Initialize JWKS client
   const client = jwksClient({
@@ -64,26 +111,27 @@ const buildServer = (options: FastifyServerOptions = {}) => {
   return server;
 };
 
-const startServer = async () => {
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const HOST = process.env.HOST || '0.0.0.0';
+
+async function startServer() {
   try {
     // Initialize database connection
     await AppDataSource.initialize();
     console.log('Database connection established');
+
+    // Build the Fastify app
+    const server = await buildApp();
+
+    // Start listening
+    await server.listen({ port: PORT, host: HOST });
     
-    // Build and start the server
-    const server = buildServer({
-      logger: {
-        level: process.env.NODE_ENV === 'production' ? 'info' : 'debug'
-      }
-    });
-    
-    const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-    const address = await server.listen({ port, host: '0.0.0.0' });
-    console.log(`Server listening at ${address}`);
+    console.log(`Server is running on http://${HOST}:${PORT}`);
+    console.log(`Swagger documentation available at http://${HOST}:${PORT}/api-docs`);
   } catch (err) {
     console.error('Error starting server:', err);
     process.exit(1);
   }
-};
+}
 
 startServer();

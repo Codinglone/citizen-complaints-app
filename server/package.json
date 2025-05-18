@@ -34,6 +34,9 @@
       "start": "ts-node src/index.ts",
       "dev": "cross-env NODE_ENV=development nodemon --exec ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs",
-      "create-admin": "ts-node src/seeds/create-admin.ts"
+      "create-admin": "ts-node src/seeds/create-admin.ts",
+      "create-agencies": "ts-node src/seeds/create-agencies.ts",
+      "create-categories": "ts-node src/seeds/create-categories.ts",
+      "seed-all": "npm run create-admin && npm run create-agencies && npm run create-categories"
    }
 }
