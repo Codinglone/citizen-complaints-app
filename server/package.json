@@ -38,6 +38,9 @@
       "create-agencies": "ts-node src/seeds/create-agencies.ts",
       "create-categories": "ts-node src/seeds/create-categories.ts",
       "seed-all": "npm run create-admin && npm run create-agencies && npm run create-categories",
-      "seed": "ts-node src/seeds/create-admin.ts"
+      "seed": "ts-node src/seeds/create-admin.ts",
+      "setup-db": "ts-node src/scripts/setup-database.ts",
+      "seed-db": "ts-node src/scripts/seed-database.ts",
+      "init-production": "cross-env NODE_ENV=production ts-node src/scripts/setup-database.ts && cross-env NODE_ENV=production ts-node src/scripts/seed-database.ts"
    }
 }

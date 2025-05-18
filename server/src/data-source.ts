@@ -6,6 +6,7 @@ import { Agency } from "./entities/Agency";
 import { Category } from "./entities/Category";
 import { Complaint } from "./entities/Complaint";
 import { Notification } from "./entities/Notification";
+import { NotificationPreferences } from "./entities/NotificationPreferences";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -29,9 +30,9 @@ export const AppDataSource = new DataSource({
           database: process.env.DB_NAME
       }),
   synchronize: false,
-  logging: process.env.NODE_ENV === "development",
-  entities: [User, Agency, Category, Complaint, Notification],
-  migrations: ["src/migrations/*.ts"],
-  migrationsRun: true,
+  logging: true,
+  entities: [User, Agency, Category, Complaint, Notification, NotificationPreferences],
+  migrations: [],
+  migrationsRun: false,
   subscribers: []
 });
