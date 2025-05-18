@@ -16,7 +16,10 @@ config();
 
 // Create fastify server
 export const buildApp = async (options: FastifyServerOptions = {}) => {
-  const server: FastifyInstance = fastify(options);
+  const server: FastifyInstance = fastify({
+    ...options,
+    logger: true
+  });
   
   // Register the request extensions plugin
   server.register(requestExtensionsPlugin);
@@ -102,7 +105,6 @@ export const buildApp = async (options: FastifyServerOptions = {}) => {
         },
         (err, decoded) => {
           if (err) return reject(err);
-          // Add type assertion to convert the decoded token to Auth0User
           resolve(decoded as Auth0User);
         }
       );
@@ -132,11 +134,37 @@ async function startServer() {
       ? [process.env.FRONTEND_URL, process.env.NGROK_URL].filter(Boolean)
       : ["http://localhost:3000"];
 
+    console.log('Allowed origins:', allowedOrigins);
+
     server.register(require("@fastify/cors"), {
-      origin: allowedOrigins,
+      origin: (origin, cb) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return cb(null, true);
+        
+        if (allowedOrigins.includes(origin)) {
+          cb(null, true);
+          return;
+        }
+        
+        // Log rejected origins for debugging
+        console.log('Rejected origin:', origin);
+        cb(new Error('Not allowed by CORS'), false);
+      },
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
+      exposedHeaders: ["Content-Type", "Authorization"],
+    });
+
+    // Add error handler
+    server.setErrorHandler((error, request, reply) => {
+      server.log.error(error);
+      reply.status(error.statusCode || 500).send({
+        error: {
+          message: error.message || 'Internal Server Error',
+          code: error.code || 'INTERNAL_SERVER_ERROR'
+        }
+      });
     });
 
     // Start listening
