@@ -51,11 +51,8 @@ export const Settings: React.FC = () => {
           <h2 className="card-title mb-4">{t('userDashboard.profileInformation')}</h2>
           
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
-            <div className="avatar">
-              <div className="w-24 h-24 rounded-full">
-                <ProfileAvatar profile={profile} />
-              </div>
-            </div>
+            {/* just render the avatar directly */}
+            <ProfileAvatar profile={profile} />
             
             <div>
               <h3 className="text-xl font-bold">{profile?.fullName}</h3>

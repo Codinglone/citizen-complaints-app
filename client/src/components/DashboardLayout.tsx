@@ -6,7 +6,6 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useTheme } from '../hooks/useTheme';
 import { useProfile } from '../hooks/useProfile';
 import { ProfileAvatar } from './ProfileAvatar';
-import type { Profile } from '../hooks/useProfile';
 
 interface DashboardLayoutProps {
   isAdmin: boolean;
@@ -20,9 +19,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
   const { theme, toggleTheme } = useTheme();
   const { profile } = useProfile();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  
-  // Default avatar for users/admins without one
-  const DEFAULT_AVATAR = 'https://avatar.iran.liara.run/public/31';
   
   // Determine which links to show based on whether this is the admin or user dashboard
   const navLinks = isAdmin
@@ -55,20 +51,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
     i18n.changeLanguage(newLang);
   };
 
-  // pick adminUser or profile
+  // Use appropriate user data based on whether we're in admin or user dashboard
   const displayUser = isAdmin ? adminUser : profile;
-  
-  // map to Profile, ensuring profileImage is always a string
-  const completeUser: Profile | null = displayUser
-    ? {
-        id: displayUser.id,
-        fullName: displayUser.fullName,
-        email: displayUser.email,
-        role: displayUser.role,
-        // if no image in DB, use default
-        profileImage: displayUser.profileImage ?? DEFAULT_AVATAR
-      }
-    : null;
+
+  // Assume Profile type requires: id, fullName, email, and optionally profileImage.
+  const completeUser = displayUser && 'id' in displayUser ? displayUser : null;
 
   return (
     <div className={`drawer lg:drawer-open ${theme}`}>
@@ -105,10 +92,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
                 <div className="w-10 rounded-full">
                   {/* Use completeUser only when available */}
                   {completeUser && (
-                    <ProfileAvatar
-                      profile={completeUser}
-                      showDetails
-                    />
+                    <ProfileAvatar profile={{ 
+                      ...completeUser, 
+                      // Ensure profileImage is undefined instead of null
+                      profileImage: completeUser.profileImage ?? undefined 
+                    }} />
                   )}
                 </div>
               </label>
@@ -169,10 +157,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
                   <div className="w-10 rounded-full">
                     {/* Use completeUser only when available */}
                     {completeUser && (
-                      <ProfileAvatar
-                        profile={completeUser}
-                        showDetails
-                      />
+                      <ProfileAvatar profile={{ 
+                        ...completeUser, 
+
+                        // Ensure profileImage is undefined instead of null
+                        profileImage: completeUser.profileImage ?? undefined 
+                      }} />
                     )}
                   </div>
                 </div>
