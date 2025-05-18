@@ -4,14 +4,14 @@ const getApiUrl = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     if (!apiUrl) {
       console.error("VITE_API_URL is not set in production!");
-      return "http://localhost:3001"; // Fallback for development
+      return "http://localhost:5000"; // Fallback for development
     }
     console.log("Using production API URL:", apiUrl);
     return apiUrl;
   }
-  // In development, use localhost
-  console.log("Using development API URL: http://localhost:3001");
-  return "http://localhost:3001";
+  // In development, use the proxy
+  console.log("Using development API URL with proxy");
+  return ""; // Empty string means use relative URLs, which will be handled by the Vite proxy
 };
 
 const getCallbackUrl = () => {
@@ -20,7 +20,7 @@ const getCallbackUrl = () => {
     console.log("Using callback URL from window origin:", origin);
     return origin;
   }
-  const fallback = import.meta.env.VITE_AUTH0_CALLBACK_URL || 'http://localhost:3000';
+  const fallback = import.meta.env.VITE_AUTH0_CALLBACK_URL || 'http://localhost:5173';
   console.log("Using fallback callback URL:", fallback);
   return fallback;
 };
