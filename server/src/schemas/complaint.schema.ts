@@ -5,7 +5,8 @@ import {
   getUserComplaintsController,
   getComplaintByIdController,
   getAllComplaintsController,
-  updateComplaintController
+  updateComplaintController,
+  trackComplaintController
 } from '../controllers/complaint.controller';
 import { ComplaintStatus, ComplaintPriority } from '../utility/enums';
 
@@ -32,6 +33,23 @@ const complaintResponseSchema = Type.Object({
   ]),
   createdAt: Type.String({ format: 'date-time', description: 'Date and time when the complaint was created' }),
   updatedAt: Type.String({ format: 'date-time', description: 'Date and time when the complaint was last updated' })
+});
+
+// Tracking response schema
+const complaintTrackingResponseSchema = Type.Object({
+  id: Type.String(),
+  title: Type.String(),
+  description: Type.String(),
+  location: Type.String(),
+  status: Type.String(),
+  priority: Type.String(),
+  trackingCode: Type.String(),
+  categoryName: Type.String(),
+  categoryId: Type.String(),
+  agencyName: Type.Optional(Type.String()),
+  agencyId: Type.Optional(Type.String()),
+  createdAt: Type.String(),
+  updatedAt: Type.String()
 });
 
 // Create complaint options
@@ -129,6 +147,27 @@ export const createAnonymousComplaintOpts = {
     }
   },
   handler: createAnonymousComplaintController
+};
+
+export const trackComplaintOpts = {
+  schema: {
+    tags: ['Complaints'],
+    summary: 'Track complaint by tracking code',
+    description: 'Track a complaint using its tracking code (no authentication required)',
+    params: Type.Object({
+      trackingCode: Type.String({ description: 'Tracking code of the complaint' })
+    }),
+    response: {
+      200: complaintTrackingResponseSchema,
+      404: Type.Object({
+        error: Type.String({ description: 'Error message' })
+      }),
+      500: Type.Object({
+        error: Type.String({ description: 'Error message' })
+      })
+    }
+  },
+  handler: trackComplaintController
 };
 
 // Get user complaints options

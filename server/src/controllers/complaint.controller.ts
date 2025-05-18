@@ -95,6 +95,43 @@ export async function createAnonymousComplaintController(
   }
 }
 
+export async function trackComplaintController(
+  request: FastifyRequest<{ Params: { trackingCode: string } }>,
+  reply: FastifyReply
+) {
+  try {
+    const { trackingCode } = request.params;
+    
+    // Get complaint with simplified query to avoid schema issues
+    const complaint = await ComplaintModel.getComplaintByTrackingCode(trackingCode);
+    
+    // Transform the data to match the expected response schema
+    const response = {
+      id: complaint.id,
+      title: complaint.title,
+      description: complaint.description,
+      location: complaint.location,
+      status: complaint.status,
+      priority: complaint.priority,
+      trackingCode: complaint.trackingCode,
+      categoryName: complaint.category?.name || 'Uncategorized', // Add this field to match schema
+      categoryId: complaint.category?.id,
+      agencyName: complaint.agency?.name,
+      agencyId: complaint.agency?.id,
+      createdAt: complaint.createdAt,
+      updatedAt: complaint.updatedAt
+    };
+    
+    return reply.code(200).send(response);
+  } catch (error) {
+    request.log.error(error);
+    if (error.message === 'Complaint not found') {
+      return reply.code(404).send({ error: 'Complaint not found' });
+    }
+    return reply.code(500).send({ error: 'Failed to track complaint' });
+  }
+}
+
 export async function getUserComplaintsController(
   request: FastifyRequest,
   reply: FastifyReply

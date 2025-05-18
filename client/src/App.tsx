@@ -13,6 +13,9 @@ import { SubmitComplaint } from './pages/SubmitComplaint';
 import { SubmitComplaintForm } from './pages/SubmitComplaintForm';
 import { ApiTest } from './pages/ApiTest';
 import './i18n';
+import { AnonymousComplaint } from './pages/AnonymousComplaint';
+import { TrackComplaint } from './pages/TrackComplaint';
+import { TestComplaintFlow } from './pages/TestComplaintFlow';
 
 // Add a simple callback component
 const AuthCallback = () => {
@@ -100,6 +103,9 @@ const App: React.FC = () => {
           <Route path="/submit-complaint-form" element={<SubmitComplaintForm />} />
           <Route path="/callback" element={<AuthCallback />} />
           <Route path="/api-test" element={<ApiTest />} />
+          <Route path="/submit-anonymous-complaint" element={<AnonymousComplaint />} />
+          <Route path="/track-complaint" element={<TrackComplaint />} />
+          <Route path='/test-complaint' element={<TestComplaintFlow />} />
         </Routes>
       </div>
     </Router>

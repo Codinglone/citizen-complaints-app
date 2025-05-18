@@ -253,4 +253,44 @@ export class ComplaintModel {
     
     return complaint.id;
   }
+
+  static async getComplaintByTrackingCode(trackingCode: string): Promise<ComplaintDetail> {
+    // Simplify the query to only select fields we're certain exist in the database
+    const complaint = await this.complaintRepository
+      .createQueryBuilder('complaint')
+      .leftJoinAndSelect('complaint.category', 'category')
+      .leftJoin('complaint.agency', 'agency')
+      .addSelect([
+        'agency.id', 
+        'agency.name'
+        // Only select minimal fields that we know exist
+      ])
+      .where('complaint.trackingCode = :trackingCode', { trackingCode })
+      .getOne();
+    
+    if (!complaint) {
+      throw new Error('Complaint not found');
+    }
+    
+    // Transform to DTO
+    return {
+      id: complaint.id,
+      title: complaint.title,
+      description: complaint.description,
+      location: complaint.location,
+      status: complaint.status,
+      priority: complaint.priority,
+      trackingCode: complaint.trackingCode,
+      category: complaint.category ? {
+        id: complaint.category.id,
+        name: complaint.category.name
+      } : null,
+      agency: complaint.agency ? {
+        id: complaint.agency.id,
+        name: complaint.agency.name
+      } : null,
+      createdAt: complaint.createdAt.toISOString(),
+      updatedAt: complaint.updatedAt.toISOString()
+    };
+  }
 }

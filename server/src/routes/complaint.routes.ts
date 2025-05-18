@@ -6,11 +6,14 @@ import {
   getUserComplaintsOpts,
   getComplaintByIdOpts,
   getAllComplaintsOpts,
-  updateComplaintOpts
+  updateComplaintOpts,
+  trackComplaintOpts
 } from '../schemas/complaint.schema';
 import { ApiRoutes, UserRoles } from '../utility/enums';
 
 export function registerComplaintRoutes(server: FastifyInstance) {
+
+  server.get('/api/complaints/track/:trackingCode', trackComplaintOpts);
   // Create complaint (authenticated)
   server.post(ApiRoutes.CREATE_COMPLAINT, {
     preHandler: requireAuth,
