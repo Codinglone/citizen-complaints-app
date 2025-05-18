@@ -6,7 +6,7 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}, toke
   console.log(`🔍 API Request: ${options.method || 'GET'} ${url}`);
   
   // Add auth header if token is provided
-  const headers = { ...options.headers };
+  const headers = config.headers as Record<string, string>;
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
     console.log('🔑 Using auth token');

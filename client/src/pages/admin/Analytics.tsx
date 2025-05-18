@@ -282,7 +282,6 @@ export const Analytics: React.FC = () => {
                   <RadialBar
                     label={{ position: 'insideStart', fill: '#fff' }}
                     background
-                    clockWise
                     dataKey="value"
                   >
                     {sentimentData.map((entry, index) => (

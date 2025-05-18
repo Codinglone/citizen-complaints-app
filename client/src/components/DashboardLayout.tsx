@@ -54,6 +54,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
   // Use appropriate user data based on whether we're in admin or user dashboard
   const displayUser = isAdmin ? adminUser : profile;
 
+  // Assume Profile type requires: id, fullName, email, and optionally profileImage.
+  const completeUser = displayUser && 'id' in displayUser ? displayUser : null;
+
   return (
     <div className={`drawer lg:drawer-open ${theme}`}>
       <input 
@@ -87,7 +90,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                 <div className="w-10 rounded-full">
-                  <ProfileAvatar profile={{ ...displayUser, profileImage: displayUser?.profileImage ?? undefined }} />
+                  {/* Use completeUser only when available */}
+                  {completeUser && (
+                    <ProfileAvatar profile={{ 
+                      ...completeUser, 
+                      // Ensure profileImage is undefined instead of null
+                      profileImage: completeUser.profileImage ?? undefined 
+                    }} />
+                  )}
                 </div>
               </label>
               <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-52">
@@ -145,7 +155,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
               <div className="flex items-center">
                 <div className="avatar mr-3">
                   <div className="w-10 rounded-full">
-                    <ProfileAvatar profile={{ ...displayUser, profileImage: displayUser?.profileImage ?? undefined }} />
+                    {/* Use completeUser only when available */}
+                    {completeUser && (
+                      <ProfileAvatar profile={{ 
+                        ...completeUser, 
+                        // Ensure profileImage is undefined instead of null
+                        profileImage: completeUser.profileImage ?? undefined 
+                      }} />
+                    )}
                   </div>
                 </div>
                 <div>

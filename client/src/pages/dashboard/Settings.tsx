@@ -4,7 +4,7 @@ import { useProfile } from '../../hooks/useProfile';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
 
 export const Settings: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { profile } = useProfile();
   
   // Form state

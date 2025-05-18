@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { type AxiosRequestConfig, type AxiosError } from 'axios';
 
 const axiosWithAuth = axios.create({
   baseURL: '/api'
@@ -14,7 +14,6 @@ axiosWithAuth.interceptors.request.use(
     console.log('Auth Token Present:', !!token);
     
     if (token) {
-      // Set the authorization header with the token
       config.headers = config.headers || {};
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -36,10 +35,8 @@ axiosWithAuth.interceptors.response.use(
   (error: AxiosError) => {
     console.error('Response error:', error.response?.status, error.response?.data);
     
-    // Handle token expiration or authentication issues
     if (error.response?.status === 401) {
       console.log('Authentication error - redirecting to login');
-      // You may want to redirect to login page or refresh token here
     }
     
     return Promise.reject(error);
