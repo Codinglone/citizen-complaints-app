@@ -22,12 +22,12 @@ export const SubmitComplaint: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          `${
-            import.meta.env.VITE_API_URL ||
-            "https://citizen-complaints-app.onrender.com/api"
-          }/categories`
-        );
+        // Fix 1: Correct API URL structure
+        const baseUrl = import.meta.env.VITE_API_URL || 
+          "https://citizen-complaints-app.onrender.com/api";
+        
+        // The correct endpoint is /api/categories - not /api/api/categories
+        const response = await fetch(`${baseUrl}/categories`);
 
         if (response.ok) {
           const data = await response.json();
@@ -35,16 +35,7 @@ export const SubmitComplaint: React.FC = () => {
           console.log("Categories loaded:", data);
         } else {
           console.error("Failed to fetch categories:", response.status);
-          // These are just placeholders - the real UUIDs will be fetched from the API
-          setCategories([
-            { id: "1", name: t("complaint.categories.roads") },
-            { id: "2", name: t("complaint.categories.water") },
-            { id: "3", name: t("complaint.categories.waste") },
-            { id: "4", name: t("complaint.categories.electricity") },
-            { id: "5", name: t("complaint.categories.publicTransport") },
-            { id: "6", name: t("complaint.categories.noise") },
-            { id: "7", name: t("complaint.categories.other") },
-          ]);
+          // Don't set fallback categories - they cause UUID errors
         }
       } catch (error) {
         console.error("Failed to fetch categories:", error);
@@ -77,14 +68,14 @@ export const SubmitComplaint: React.FC = () => {
         throw new Error("Description must be at least 10 characters long");
       }
 
-      // Check if categoryId is valid - we now accept both UUIDs and simple numeric IDs
+      // Check if categoryId is valid
       if (!formData.categoryId) {
         throw new Error("Please select a valid category");
       }
 
-      const baseUrl =
-        import.meta.env.VITE_API_URL ||
-        "https://citizen-complaints-app.onrender.com";
+      // Fix 2: Correct base URL definition 
+      const baseUrl = import.meta.env.VITE_API_URL || 
+        "https://citizen-complaints-app.onrender.com/api";
 
       const headers: HeadersInit = {
         "Content-Type": "application/json",
@@ -98,7 +89,7 @@ export const SubmitComplaint: React.FC = () => {
 
       console.log("Submitting anonymously due to auth issues");
 
-      // IMPORTANT: Use the correct endpoint path - include /api/ prefix
+      // Fix 3: Use correct URL structure with /api prefix
       const response = await fetch(`${baseUrl}/complaints/anonymous`, {
         method: "POST",
         headers,
