@@ -17,6 +17,7 @@ export const useAuth = () => {
     logout,
     isLoading,
     error,
+    getAccessTokenSilently,
   } = useAuth0();
 
   const [user, setUser] = useState<User | null>(null);
@@ -32,7 +33,7 @@ export const useAuth = () => {
         id: auth0User.sub || "",
         fullName: auth0User.name || "",
         email: auth0User.email || "",
-        role: "citizen", // Default role
+        role: "citizen",
         picture: auth0User.picture,
       });
     } else {
@@ -53,11 +54,16 @@ export const useAuth = () => {
     window.location.href = "/dashboard";
   };
 
-  // Return the getToken function
-  const getTokenFromLocal = () => {
-    return (
-      localStorage.getItem("authToken") || localStorage.getItem("adminToken")
-    );
+  // Get token asynchronously using Auth0's getAccessTokenSilently
+  const getToken = async () => {
+    if (!isAuthenticated) return null;
+    try {
+      const token = await getAccessTokenSilently();
+      return token;
+    } catch (err) {
+      console.error("Failed to get access token:", err);
+      return null;
+    }
   };
 
   return {
@@ -66,7 +72,7 @@ export const useAuth = () => {
     login,
     logout: () =>
       logout({ logoutParams: { returnTo: window.location.origin } }),
-    getToken: getTokenFromLocal,
+    getToken,
     isLoading,
     error,
     handleRedirectCallback,

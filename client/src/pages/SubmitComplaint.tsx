@@ -105,10 +105,10 @@ export const SubmitComplaint: React.FC = () => {
         throw new Error("Please select a valid category");
       }
 
-      // Bypass fetchWithAuth to handle auth token explicitly
-      const token = isAuthenticated ? getToken() : null;
+      // Get token asynchronously - Note the await here!
+      const token = isAuthenticated ? await getToken() : null;
       const baseUrl =
-        process.env.REACT_APP_API_URL ||
+        import.meta.env.VITE_API_URL ||
         "https://citizen-complaints-app.onrender.com";
 
       const headers: HeadersInit = {
@@ -122,10 +122,16 @@ export const SubmitComplaint: React.FC = () => {
       console.log("Submitting with token:", token ? "Present" : "None");
       console.log("Headers:", headers);
 
+      // If not authenticated, add anonymous flag for server to allow submission
+      const complaintData = {
+        ...formData,
+        anonymous: !isAuthenticated,
+      };
+
       const response = await fetch(`${baseUrl}/api/complaints`, {
         method: "POST",
         headers,
-        body: JSON.stringify(formData),
+        body: JSON.stringify(complaintData),
       });
 
       if (!response.ok) {
