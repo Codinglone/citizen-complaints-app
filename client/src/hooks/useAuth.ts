@@ -41,16 +41,6 @@ export const useAuth = () => {
     }
   }, [isAuthenticated, auth0User]);
 
-  // Function to get the token for API calls
-  const getToken = async () => {
-    try {
-      return await getAccessTokenSilently();
-    } catch (error) {
-      console.error("Error getting token:", error);
-      return null;
-    }
-  };
-
   const login = () => {
     loginWithRedirect({
       appState: {
