@@ -126,7 +126,7 @@ export const SubmitComplaint: React.FC = () => {
       console.log("Submitting anonymously due to auth issues");
 
       // Use the correct endpoint path
-      const response = await fetch(`${baseUrl}/api/complaints/anonymous`, {
+      const response = await fetch(`${baseUrl}/complaints/anonymous`, {
         method: "POST",
         headers,
         body: JSON.stringify(complaintData),
