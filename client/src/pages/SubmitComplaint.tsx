@@ -16,10 +16,9 @@ export const SubmitComplaint: React.FC = () => {
     description: "",
     categoryId: "",
     location: "",
-    attachments: null as FileList | null,
   });
 
-  // Mock categories data (in a real app, this would come from the API)
+  // Mock categories data
   const categories = [
     { id: "1", name: t("complaint.categories.roads") },
     { id: "2", name: t("complaint.categories.water") },
@@ -39,34 +38,17 @@ export const SubmitComplaint: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData((prev) => ({ ...prev, attachments: e.target.files }));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // Create form data for file uploads
-      const submitData = new FormData();
-      submitData.append("title", formData.title);
-      submitData.append("description", formData.description);
-      submitData.append("categoryId", formData.categoryId);
-      submitData.append("location", formData.location);
-
-      // Add attachments if any
-      if (formData.attachments) {
-        for (let i = 0; i < formData.attachments.length; i++) {
-          submitData.append("attachments", formData.attachments[i]);
-        }
-      }
-
       const response = await fetchWithAuth("/complaints", {
         method: "POST",
-        body: submitData,
+        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
         requireAuth: isAuthenticated,
       });
 
@@ -78,7 +60,6 @@ export const SubmitComplaint: React.FC = () => {
           description: "",
           categoryId: "",
           location: "",
-          attachments: null,
         });
 
         // Redirect to complaints list after successful submission
@@ -195,25 +176,6 @@ export const SubmitComplaint: React.FC = () => {
               />
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">
-                  {t("complaint.attachments")}
-                </span>
-                <span className="label-text-alt">
-                  {t("complaint.attachmentsDescription")}
-                </span>
-              </label>
-              <input
-                type="file"
-                name="attachments"
-                onChange={handleFileChange}
-                className="file-input file-input-bordered w-full"
-                multiple
-                accept="image/*,.pdf,.doc,.docx"
-              />
-            </div>
-
             <div className="flex justify-end gap-2">
               <button
                 type="button"
@@ -224,10 +186,17 @@ export const SubmitComplaint: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+                className="btn btn-primary"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Submitting..." : t("complaint.submit")}
+                {isSubmitting ? (
+                  <>
+                    <span className="loading loading-spinner loading-xs"></span>
+                    <span>Submitting...</span>
+                  </>
+                ) : (
+                  t("complaint.submit")
+                )}
               </button>
             </div>
           </form>
