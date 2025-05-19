@@ -31,7 +31,7 @@ export const LandingPage: React.FC = () => {
                   <button onClick={() => login()} className="btn btn-primary">
                     {t('landing.signIn')}
                   </button>
-                  <Link to="/submit-complaint" className="btn btn-outline btn-secondary">
+                  <Link to="/anonymous-complaint" className="btn btn-outline btn-secondary">
                     {t('landing.submitAnonymously')}
                   </Link>
                 </>

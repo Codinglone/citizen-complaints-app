@@ -85,7 +85,7 @@ export async function createAnonymousComplaintController(
       return reply.code(400).send({ error: 'Invalid category' });
     }
 
-    // Use AI to analyze the complaint if enabled
+    // Use AI to analyze the complaint
     let aiAnalysis = null;
     try {
       aiAnalysis = await AIService.analyzeComplaint(title, description, location);
@@ -93,13 +93,15 @@ export async function createAnonymousComplaintController(
       logger.info('AI Analysis result:', {
         suggestedCategoryId: aiAnalysis.suggestedCategoryId,
         suggestedAgencyId: aiAnalysis.suggestedAgencyId,
-        confidence: aiAnalysis.confidence
+        confidence: aiAnalysis.confidence,
+        sentimentScore: aiAnalysis.sentimentScore,
+        language: aiAnalysis.language
       });
     } catch (aiError) {
       logger.error('AI analysis failed:', aiError);
     }
 
-    // Create the complaint with AI-suggested values when available
+    // Create the complaint with AI-derived fields
     const complaintData = {
       title,
       description,
@@ -115,7 +117,7 @@ export async function createAnonymousComplaintController(
     };
 
     // Create the complaint
-    const result = await ComplaintModel.createAnonymousComplaint(complaintData);
+    const result = await ComplaintModel.createAnonymous(complaintData);
 
     return reply.code(201).send({
       id: result.id,
@@ -128,7 +130,7 @@ export async function createAnonymousComplaintController(
           (await CategoryModel.findById(aiAnalysis.suggestedCategoryId))?.name : null,
         suggestedAgencyId: aiAnalysis.suggestedAgencyId,
         suggestedAgency: aiAnalysis.suggestedAgencyId ? 
-          (await AgencyModel.findById(aiAnalysis.suggestedAgencyId))?.name : null,
+          (await AgencyModel.findById(aiAnalysis.suggestedAgencyId))?.name || 'Unnamed Agency' : null,
         confidence: aiAnalysis.confidence
       } : null
     });

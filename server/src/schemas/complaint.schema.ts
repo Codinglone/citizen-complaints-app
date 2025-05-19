@@ -101,42 +101,20 @@ export const createComplaintOpts = {
 export const createAnonymousComplaintOpts = {
   schema: {
     tags: ['Complaints'],
-    summary: 'Submit anonymous complaint',
-    description: 'Submit a new complaint anonymously (no authentication required)',
+    summary: 'Submit an anonymous complaint',
     body: Type.Object({
-      title: Type.String({ 
-        minLength: 3, 
-        maxLength: 100,
-        description: 'Title of the complaint' 
-      }),
-      description: Type.String({ 
-        minLength: 10, 
-        maxLength: 2000,
-        description: 'Detailed description of the complaint' 
-      }),
-      categoryId: Type.String({ 
-        format: 'uuid',
-        description: 'ID of the complaint category' 
-      }),
-      location: Type.String({ 
-        minLength: 3, 
-        maxLength: 200,
-        description: 'Location related to the complaint' 
-      }),
-      contactEmail: Type.Optional(Type.String({ 
-        format: 'email',
-        description: 'Contact email for follow-up' 
-      })),
-      contactPhone: Type.Optional(Type.String({ 
-        pattern: '^[0-9+\\-\\s]{5,20}$',
-        description: 'Contact phone number for follow-up' 
-      }))
+      title: Type.String({ minLength: 3, maxLength: 100 }),
+      description: Type.String({ minLength: 10 }),
+      categoryId: Type.String(),
+      location: Type.Optional(Type.String()),
+      contactEmail: Type.Optional(Type.String({ format: 'email' })),
+      contactPhone: Type.Optional(Type.String())
     }),
     response: {
       201: Type.Object({
-        id: Type.String({ description: 'ID of the created complaint' }),
-        trackingCode: Type.String({ description: 'Tracking code for the complaint' }),
-        message: Type.String({ description: 'Success message' }),
+        id: Type.String(),
+        trackingCode: Type.String(),
+        message: Type.String(),
         aiSuggestions: Type.Optional(Type.Object({
           suggestedCategoryId: Type.Optional(Type.String()),
           suggestedCategory: Type.Optional(Type.String()),
@@ -146,10 +124,10 @@ export const createAnonymousComplaintOpts = {
         }))
       }),
       400: Type.Object({
-        error: Type.String({ description: 'Error message' })
+        error: Type.String()
       }),
       500: Type.Object({
-        error: Type.String({ description: 'Error message' })
+        error: Type.String()
       })
     }
   },

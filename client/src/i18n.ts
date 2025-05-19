@@ -20,7 +20,7 @@ const enResources = {
       signin: "Sign In",
       adminSignin: "Admin Sign In",
       signout: "Sign Out",
-      language: "Language"
+      language: "Language",
     },
     landing: {
       title: "Citizen Engagement Platform",
@@ -95,7 +95,7 @@ const enResources = {
       changePassword: "Change Password",
       enableTwoFactor: "Enable Two-Factor Authentication",
       dangerZone: "Danger Zone",
-      deleteAccount: "Delete My Account"
+      deleteAccount: "Delete My Account",
     },
     adminPanel: {
       title: "Admin Dashboard",
@@ -132,30 +132,38 @@ const enResources = {
         other: "Other",
       },
     },
+    anonymousComplaint: {
+      aiAnalysis: "AI Analysis Results",
+      aiExplanation:
+        "Our AI system will analyze your complaint to suggest the most appropriate category and agency for handling it.",
+      suggestedCategory: "Suggested Category",
+      suggestedAgency: "Suggested Agency",
+      confidence: "AI Confidence Level",
+    },
     analytics: {
       title: "Analytics Dashboard",
       timeRanges: {
         week: "Last Week",
         month: "Last Month",
         quarter: "Last Quarter",
-        year: "Last Year"
+        year: "Last Year",
       },
       metrics: {
         totalComplaints: "Total Complaints",
         resolvedComplaints: "Resolved Complaints",
         averageResolutionTime: "Avg. Resolution Time",
-        satisfactionRate: "Satisfaction Rate"
+        satisfactionRate: "Satisfaction Rate",
       },
       charts: {
         complaintsOverTime: "Complaints Over Time",
         categoryDistribution: "Category Distribution",
-        statusDistribution: "Status Distribution"
+        statusDistribution: "Status Distribution",
       },
       topAgencies: "Top Performing Agencies",
       agency: "Agency",
       complaintsHandled: "Complaints Handled",
       resolutionRate: "Resolution Rate",
-      averageResolutionTime: "Avg. Resolution Time"
+      averageResolutionTime: "Avg. Resolution Time",
     },
     theme: {
       change: "Change Theme",
@@ -186,7 +194,7 @@ const enResources = {
       genericError: "Sign in failed. Please check your credentials.",
       networkError: "Network error. Please try again later.",
       orDivider: "OR",
-      backToHome: "Back to Home"
+      backToHome: "Back to Home",
     },
   },
 };
@@ -210,7 +218,7 @@ const frResources = {
       signin: "Se Connecter",
       adminSignin: "Connexion Admin",
       signout: "Se Déconnecter",
-      language: "Langue"
+      language: "Langue",
     },
     landing: {
       title: "Plateforme d'Engagement Citoyen",
@@ -287,7 +295,7 @@ const frResources = {
       changePassword: "Changer le Mot de Passe",
       enableTwoFactor: "Activer l'Authentification à Deux Facteurs",
       dangerZone: "Zone Dangereuse",
-      deleteAccount: "Supprimer Mon Compte"
+      deleteAccount: "Supprimer Mon Compte",
     },
     adminPanel: {
       title: "Tableau de Bord Admin",
@@ -330,24 +338,24 @@ const frResources = {
         week: "Last Week",
         month: "Last Month",
         quarter: "Last Quarter",
-        year: "Last Year"
+        year: "Last Year",
       },
       metrics: {
         totalComplaints: "Total Complaints",
         resolvedComplaints: "Resolved Complaints",
         averageResolutionTime: "Avg. Resolution Time",
-        satisfactionRate: "Satisfaction Rate"
+        satisfactionRate: "Satisfaction Rate",
       },
       charts: {
         complaintsOverTime: "Complaints Over Time",
         categoryDistribution: "Category Distribution",
-        statusDistribution: "Status Distribution"
+        statusDistribution: "Status Distribution",
       },
       topAgencies: "Top Performing Agencies",
       agency: "Agency",
       complaintsHandled: "Complaints Handled",
       resolutionRate: "Resolution Rate",
-      averageResolutionTime: "Avg. Resolution Time"
+      averageResolutionTime: "Avg. Resolution Time",
     },
     theme: {
       change: "Changer de Thème",
@@ -364,10 +372,11 @@ const frResources = {
       passwordLabel: "Mot de passe",
       loginButton: "Se Connecter",
       loggingIn: "Connexion en cours...",
-      genericError: "La connexion a échoué. Veuillez vérifier vos identifiants.",
+      genericError:
+        "La connexion a échoué. Veuillez vérifier vos identifiants.",
       networkError: "Erreur réseau. Veuillez réessayer plus tard.",
       orDivider: "OU",
-      backToHome: "Retour à l'Accueil"
+      backToHome: "Retour à l'Accueil",
     },
   },
 };

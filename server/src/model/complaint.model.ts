@@ -110,48 +110,34 @@ export class ComplaintModel {
     };
   }
 
-  static async createAnonymousComplaint(params: CreateAnonymousComplaintParams): Promise<{ id: string; trackingCode: string }> {
-    const { title, description, categoryId, location, contactEmail, contactPhone, sentimentScore, language, agencyId } = params;
-    
-    // Get category
-    const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
-    if (!category) {
-      throw new Error('Invalid category');
-    }
-    
+  static async createAnonymous(params: CreateAnonymousComplaintParams): Promise<{ 
+    id: string; 
+    trackingCode: string;
+  }> {
     // Generate tracking code
     const trackingCode = this.generateAnonymousTrackingCode();
     
-    // Create complaint
-    let agency = null;
-    if (agencyId) {
-      agency = await this.agencyRepository.findOne({ where: { id: agencyId } });
-      if (!agency) {
-        throw new Error('Invalid agency');
-      }
-    }
-
+    // Create new complaint
     const complaint = this.complaintRepository.create({
-      title,
-      description,
-      location,
-      contactEmail,
-      contactPhone,
+      title: params.title,
+      description: params.description,
+      categoryId: params.categoryId,
+      location: params.location,
+      contactEmail: params.contactEmail,
+      contactPhone: params.contactPhone,
       trackingCode,
-      status: ComplaintStatus.PENDING,
-      priority: ComplaintPriority.MEDIUM,
-      sentimentScore: sentimentScore || 0,
-      language: language || 'en',
-      category,
-      agency
+      status: 'pending',
+      priority: 'medium',
+      sentimentScore: params.sentimentScore || 0,
+      language: params.language || 'en',
+      agencyId: params.agencyId || null
     });
     
-    // Save complaint
-    const savedComplaint = await this.complaintRepository.save(complaint);
+    await this.complaintRepository.save(complaint);
     
     return {
-      id: savedComplaint.id,
-      trackingCode: savedComplaint.trackingCode
+      id: complaint.id,
+      trackingCode: complaint.trackingCode
     };
   }
 

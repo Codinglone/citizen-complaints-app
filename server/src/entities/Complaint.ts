@@ -24,12 +24,6 @@ export class Complaint {
   @Column({ nullable: true })
   location: string;
 
-  @Column({ nullable: true })
-  sentimentScore: number;
-
-  @Column({ nullable: true })
-  language: string;
-
   @Column({ default: "pending" })
   status: string;
 
@@ -45,14 +39,30 @@ export class Complaint {
   @Column({ nullable: true })
   contactPhone: string;
 
+  // Added AI-related fields
+  @Column({ nullable: true })
+  sentimentScore: number;
+
+  @Column({ nullable: true })
+  language: string;
+
+  @ManyToOne(() => Category, { nullable: false })
+  category: Category;
+
+  @Column()
+  categoryId: string;
+
+  @ManyToOne(() => Agency, { nullable: true })
+  agency: Agency;
+
+  @Column({ nullable: true })
+  agencyId: string;
+
   @ManyToOne(() => User, (user) => user.complaints, { nullable: true })
   user: User;
 
-  @ManyToOne(() => Agency, (agency) => agency.complaints, { nullable: true })
-  agency: Agency;
-
-  @ManyToOne(() => Category, (category) => category.complaints)
-  category: Category;
+  @Column({ nullable: true })
+  userId: string;
 
   @CreateDateColumn()
   createdAt: Date;
