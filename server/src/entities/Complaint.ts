@@ -69,4 +69,8 @@ export class Complaint {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Add the missing notes field:
+  @Column({ type: "text", nullable: true })
+  notes: string;
 }

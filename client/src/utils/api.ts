@@ -49,3 +49,55 @@ export const useApi = () => {
 
   return { fetchWithAuth };
 };
+
+// Add the missing function
+export const getComplaintById = async (id?: string) => {
+  if (!id) {
+    throw new Error('Complaint ID is required');
+  }
+  
+  const token = localStorage.getItem("adminToken");
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+  
+  const response = await fetch(`${config.apiUrl}/api/admin/complaints/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch complaint');
+  }
+  
+  return response.json();
+};
+
+// Make sure you have updateComplaint defined as well
+export const updateComplaint = async (id: string, data: { 
+  notes?: string; 
+  status?: string; 
+  priority?: string 
+}) => {
+  const token = localStorage.getItem("adminToken");
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+  
+  const response = await fetch(`${config.apiUrl}/api/admin/complaints/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to update complaint');
+  }
+  
+  return response.json();
+};
