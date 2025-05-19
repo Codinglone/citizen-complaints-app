@@ -21,6 +21,9 @@ interface CreateAnonymousComplaintParams {
   location: string;
   contactEmail?: string;
   contactPhone?: string;
+  sentimentScore?: number;
+  language?: string;
+  agencyId?: string | null;
 }
 
 interface UpdateComplaintParams {
@@ -108,7 +111,7 @@ export class ComplaintModel {
   }
 
   static async createAnonymousComplaint(params: CreateAnonymousComplaintParams): Promise<{ id: string; trackingCode: string }> {
-    const { title, description, categoryId, location, contactEmail, contactPhone } = params;
+    const { title, description, categoryId, location, contactEmail, contactPhone, sentimentScore, language, agencyId } = params;
     
     // Get category
     const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
@@ -116,20 +119,32 @@ export class ComplaintModel {
       throw new Error('Invalid category');
     }
     
-    // Create complaint
-    const complaint = new Complaint();
-    complaint.title = title;
-    complaint.description = description;
-    complaint.location = location;
-    complaint.status = ComplaintStatus.PENDING;
-    complaint.priority = ComplaintPriority.MEDIUM;
-    complaint.category = category;
-    complaint.contactEmail = contactEmail;
-    complaint.contactPhone = contactPhone;
-    
     // Generate tracking code
-    const trackingCode = generateTrackingCode('ANO');
-    complaint.trackingCode = trackingCode;
+    const trackingCode = this.generateAnonymousTrackingCode();
+    
+    // Create complaint
+    let agency = null;
+    if (agencyId) {
+      agency = await this.agencyRepository.findOne({ where: { id: agencyId } });
+      if (!agency) {
+        throw new Error('Invalid agency');
+      }
+    }
+
+    const complaint = this.complaintRepository.create({
+      title,
+      description,
+      location,
+      contactEmail,
+      contactPhone,
+      trackingCode,
+      status: ComplaintStatus.PENDING,
+      priority: ComplaintPriority.MEDIUM,
+      sentimentScore: sentimentScore || 0,
+      language: language || 'en',
+      category,
+      agency
+    });
     
     // Save complaint
     const savedComplaint = await this.complaintRepository.save(complaint);
@@ -138,6 +153,22 @@ export class ComplaintModel {
       id: savedComplaint.id,
       trackingCode: savedComplaint.trackingCode
     };
+  }
+
+  /**
+   * Generates a tracking code for anonymous complaints.
+   */
+  private static generateAnonymousTrackingCode(): string {
+    // Format: ANO-YYYYMMDD-XXXXXX
+    const date = new Date();
+    const dateStr = date.getFullYear().toString() +
+      ('0' + (date.getMonth() + 1)).slice(-2) +
+      ('0' + date.getDate()).slice(-2);
+      
+    // Random 6-digit number
+    const random = Math.floor(Math.random() * 900000) + 100000;
+    
+    return `ANO-${dateStr}-${random}`;
   }
 
   static async getUserComplaints(userId: string): Promise<ComplaintListItem[]> {

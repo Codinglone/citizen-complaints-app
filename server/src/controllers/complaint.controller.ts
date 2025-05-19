@@ -1,6 +1,10 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { ComplaintModel } from '../model/complaint.model';
 import { ComplaintStatus, ComplaintPriority } from '../utility/enums';
+import { AIService } from '../services/ai.service';
+import { CategoryModel } from '../model/category.model';
+import { AgencyModel } from '../model/agency.model';
+import { logger } from '../utility/logger';
 
 // Define request interfaces for proper typing
 interface CreateComplaintRequest {
@@ -67,24 +71,66 @@ export async function createComplaintController(
   }
 }
 
+// Modify the createAnonymousComplaintController function
 export async function createAnonymousComplaintController(
   request: FastifyRequest<AnonymousComplaintRequest>,
   reply: FastifyReply
 ) {
   try {
-    const result = await ComplaintModel.createAnonymousComplaint({
-      title: request.body.title,
-      description: request.body.description,
-      categoryId: request.body.categoryId,
-      location: request.body.location,
-      contactEmail: request.body.contactEmail,
-      contactPhone: request.body.contactPhone
-    });
-    
+    const { title, description, categoryId, location, contactEmail, contactPhone } = request.body;
+
+    // Validate if the category exists
+    const category = await CategoryModel.findById(categoryId);
+    if (!category) {
+      return reply.code(400).send({ error: 'Invalid category' });
+    }
+
+    // Use AI to analyze the complaint if enabled
+    let aiAnalysis = null;
+    try {
+      aiAnalysis = await AIService.analyzeComplaint(title, description, location);
+      
+      logger.info('AI Analysis result:', {
+        suggestedCategoryId: aiAnalysis.suggestedCategoryId,
+        suggestedAgencyId: aiAnalysis.suggestedAgencyId,
+        confidence: aiAnalysis.confidence
+      });
+    } catch (aiError) {
+      logger.error('AI analysis failed:', aiError);
+    }
+
+    // Create the complaint with AI-suggested values when available
+    const complaintData = {
+      title,
+      description,
+      categoryId: categoryId, // Use user-selected category as primary
+      location,
+      contactEmail,
+      contactPhone,
+      // Add AI-derived fields
+      sentimentScore: aiAnalysis?.sentimentScore ?? 0,
+      language: aiAnalysis?.language ?? 'en',
+      // If AI confidence is high (over 80%), use suggested agency
+      agencyId: aiAnalysis?.confidence > 80 ? aiAnalysis.suggestedAgencyId : null
+    };
+
+    // Create the complaint
+    const result = await ComplaintModel.createAnonymousComplaint(complaintData);
+
     return reply.code(201).send({
       id: result.id,
       trackingCode: result.trackingCode,
-      message: 'Anonymous complaint submitted successfully'
+      message: 'Anonymous complaint submitted successfully',
+      // Include AI suggestions in response
+      aiSuggestions: aiAnalysis ? {
+        suggestedCategoryId: aiAnalysis.suggestedCategoryId,
+        suggestedCategory: aiAnalysis.suggestedCategoryId ? 
+          (await CategoryModel.findById(aiAnalysis.suggestedCategoryId))?.name : null,
+        suggestedAgencyId: aiAnalysis.suggestedAgencyId,
+        suggestedAgency: aiAnalysis.suggestedAgencyId ? 
+          (await AgencyModel.findById(aiAnalysis.suggestedAgencyId))?.name : null,
+        confidence: aiAnalysis.confidence
+      } : null
     });
   } catch (error) {
     request.log.error(error);

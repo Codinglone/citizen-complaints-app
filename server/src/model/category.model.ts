@@ -1,22 +1,16 @@
+import { Repository } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { Category } from '../entities/Category';
 
-interface CategoryListItem {
-  id: string;
-  name: string;
-  description: string | null;
-}
-
 export class CategoryModel {
-  static categoryRepository = AppDataSource.getRepository(Category);
+  static categoryRepository: Repository<Category> = AppDataSource.getRepository(Category);
 
-  static async getAllCategories(): Promise<CategoryListItem[]> {
-    const categories = await this.categoryRepository.find();
-    
-    return categories.map(category => ({
-      id: category.id,
-      name: category.name,
-      description: category.description
-    }));
+  static async findById(id: string): Promise<Category | null> {
+    return this.categoryRepository.findOne({ where: { id } });
+  }
+  
+  // Make sure this method is implemented
+  static async getAll(): Promise<Category[]> {
+    return this.categoryRepository.find();
   }
 }

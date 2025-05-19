@@ -136,7 +136,14 @@ export const createAnonymousComplaintOpts = {
       201: Type.Object({
         id: Type.String({ description: 'ID of the created complaint' }),
         trackingCode: Type.String({ description: 'Tracking code for the complaint' }),
-        message: Type.String({ description: 'Success message' })
+        message: Type.String({ description: 'Success message' }),
+        aiSuggestions: Type.Optional(Type.Object({
+          suggestedCategoryId: Type.Optional(Type.String()),
+          suggestedCategory: Type.Optional(Type.String()),
+          suggestedAgencyId: Type.Optional(Type.String()),
+          suggestedAgency: Type.Optional(Type.String()),
+          confidence: Type.Number()
+        }))
       }),
       400: Type.Object({
         error: Type.String({ description: 'Error message' })

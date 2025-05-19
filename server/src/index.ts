@@ -5,6 +5,8 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { AppDataSource } from './data-source';
 import { registerRoutes } from './routes';
+import { registerAdminRoutes } from './routes/admin.routes';
+import { registerCategoryRoutes } from './routes/category.routes';
 import requestExtensionsPlugin from './plugins/requestExtensions';
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
@@ -150,6 +152,8 @@ export const buildApp = async (options: FastifyServerOptions = {}) => {
   
   // Register routes
   registerRoutes(server);
+  registerAdminRoutes(server);
+  registerCategoryRoutes(server);
   
   return server;
 };

@@ -6,7 +6,8 @@ export async function getAllCategoriesController(
   reply: FastifyReply
 ) {
   try {
-    return await CategoryModel.getAllCategories();
+    const categories = await CategoryModel.getAll();
+    return categories;
   } catch (error) {
     request.log.error(error);
     return reply.code(500).send({ error: 'Failed to fetch categories' });

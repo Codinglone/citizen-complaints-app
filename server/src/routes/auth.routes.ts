@@ -1,13 +1,15 @@
 import { FastifyInstance } from "fastify";
 import { Type } from "@sinclair/typebox";
-import { verifyToken, requireAuth } from "../middleware/auth.middleware";
+import {
+  verifyToken,
+  requireAuth,
+  requireRole,
+} from "../middleware/auth.middleware";
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
-import { Auth0User } from "../types/auth0";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 
-// Define the update profile request type
 interface UpdateProfileRequest {
   fullName?: string;
   phoneNumber?: string;
@@ -31,6 +33,14 @@ export function registerAuthRoutes(server: FastifyInstance) {
       }
     },
   });
+
+  // Define the AI routing test request type
+  interface TestAiRoutingRequest {
+    title: string;
+    description: string;
+    location: string;
+    categoryId?: string;
+  }
 
   // Admin login endpoint (JWT based)
   server.post<{ Body: LoginRequest }>("/api/auth/login", {

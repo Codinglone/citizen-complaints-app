@@ -27,6 +27,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ isAdmin }) => 
         { to: '/admin/complaints', label: t('nav.complaints'), icon: '📝' },
         { to: '/admin/users', label: t('nav.users'), icon: '👥' },
         { to: '/admin/analytics', label: t('nav.analytics'), icon: '📊' },
+        { to: '/admin/ai-dashboard', label: t('nav.aiRouting'), icon: '🤖' }, // Add this line
         { to: '/admin/settings', label: t('nav.settings'), icon: '⚙️' },
       ]
     : [
