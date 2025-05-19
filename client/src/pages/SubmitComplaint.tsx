@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useApi } from "../utils/api";
 
 export const SubmitComplaint: React.FC = () => {
   const { t } = useTranslation();
