@@ -20,29 +20,53 @@ export const SubmitComplaint: React.FC = () => {
     Array<{ id: string; name: string }>
   >([]);
 
-  // Fetch categories from API
+  // Fetch categories from API with proper endpoint
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        // Make sure to use the correct endpoint for categories (without duplicated /api/)
         const response = await fetch(
           `${
-            process.env.REACT_APP_API_URL ||
+            import.meta.env.VITE_API_URL ||
             "https://citizen-complaints-app.onrender.com"
-          }/categories`
+          }/api/categories`
         );
+
         if (response.ok) {
           const data = await response.json();
           setCategories(data);
         } else {
-          // Fallback to mock categories if API fails
+          console.error("Failed to fetch categories:", response.status);
+          // Don't use simple numeric IDs - use real UUIDs even in mock data
           setCategories([
-            { id: "1", name: t("complaint.categories.roads") },
-            { id: "2", name: t("complaint.categories.water") },
-            { id: "3", name: t("complaint.categories.waste") },
-            { id: "4", name: t("complaint.categories.electricity") },
-            { id: "5", name: t("complaint.categories.publicTransport") },
-            { id: "6", name: t("complaint.categories.noise") },
-            { id: "7", name: t("complaint.categories.other") },
+            {
+              id: "8a7d5c1e-4b6a-4b0e-8f9a-1c2d3e4f5a6b",
+              name: t("complaint.categories.roads"),
+            },
+            {
+              id: "9b8c7d6e-5f4a-3b2c-1d0e-9f8a7b6c5d4e",
+              name: t("complaint.categories.water"),
+            },
+            {
+              id: "7c6d5b4a-3f2e-1d0c-9b8a-7f6e5d4c3b2a",
+              name: t("complaint.categories.waste"),
+            },
+            {
+              id: "6b5a4d3c-2e1f-0d9c-8b7a-6e5d4c3b2a1f",
+              name: t("complaint.categories.electricity"),
+            },
+            {
+              id: "5a4b3c2d-1e0f-9d8c-7b6a-5d4c3b2a1e0f",
+              name: t("complaint.categories.publicTransport"),
+            },
+            {
+              id: "4d3c2b1a-0e9f-8d7c-6b5a-4c3b2a1d0e9f",
+              name: t("complaint.categories.noise"),
+            },
+            {
+              id: "3c2b1a9d-8e7f-6d5c-4b3a-2c1d0e9f8a7b",
+              name: t("complaint.categories.other"),
+            },
           ]);
         }
       } catch (error) {
@@ -68,6 +92,19 @@ export const SubmitComplaint: React.FC = () => {
     setError(null);
 
     try {
+      // Log the data being sent for debugging
+      console.log("Submitting complaint data:", formData);
+
+      // Check if categoryId is valid - show error if not
+      if (
+        !formData.categoryId ||
+        !formData.categoryId.match(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+        )
+      ) {
+        throw new Error("Please select a valid category");
+      }
+
       // Bypass fetchWithAuth to handle auth token explicitly
       const token = isAuthenticated ? getToken() : null;
       const baseUrl =
@@ -94,10 +131,35 @@ export const SubmitComplaint: React.FC = () => {
       if (!response.ok) {
         // Get detailed error information
         const errorText = await response.text();
-        console.error("Server response:", response.status, errorText);
-        throw new Error(
-          `Failed to submit complaint: ${response.status} ${response.statusText}`
-        );
+        console.log("Server response:", response.status, errorText);
+
+        // Try to parse error as JSON if possible
+        try {
+          const errorJson = JSON.parse(errorText);
+          if (errorJson.validation) {
+            // Format validation errors for display
+            const validationErrors = errorJson.validation
+              .map(
+                (err: any) =>
+                  `${
+                    err.params.missingProperty ||
+                    err.instancePath.replace("/", "")
+                  } ${err.message}`
+              )
+              .join(", ");
+            throw new Error(`Validation error: ${validationErrors}`);
+          }
+          throw new Error(
+            `Failed to submit complaint: ${
+              errorJson.error || errorJson.message || response.status
+            }`
+          );
+        } catch (e) {
+          // If not JSON or other parsing error, use text
+          throw new Error(
+            `Failed to submit complaint: ${response.status} ${errorText}`
+          );
+        }
       }
 
       setSuccess(true);
