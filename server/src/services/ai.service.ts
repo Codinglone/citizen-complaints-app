@@ -2,6 +2,7 @@ import axios from 'axios';
 import { logger } from '../utility/logger';
 import { CategoryModel } from '../model/category.model';
 import { AgencyModel } from '../model/agency.model';
+import { AI_CONFIG } from './ai.config';
 
 interface AIAnalysisResult {
   suggestedCategoryId: string | null;
@@ -97,6 +98,7 @@ export class AIService {
         {
           model: this.model,
           messages: [{ role: 'user', content: prompt }],
+          max_tokens: AI_CONFIG.maxTokens, // Use the reduced token limit
           response_format: { type: 'json_object' }
         },
         {
