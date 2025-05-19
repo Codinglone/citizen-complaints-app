@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+// import { useAuth } from "../hooks/useAuth";
 
 export const SubmitComplaint: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated, getToken } = useAuth();
+  // const { isAuthenticated, getToken } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,6 +86,8 @@ export const SubmitComplaint: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Fix API endpoint path and add anonymous submission flag
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -95,7 +97,7 @@ export const SubmitComplaint: React.FC = () => {
       // Log the data being sent for debugging
       console.log("Submitting complaint data:", formData);
 
-      // Check if categoryId is valid - show error if not
+      // Check if categoryId is valid
       if (
         !formData.categoryId ||
         !formData.categoryId.match(
@@ -105,8 +107,7 @@ export const SubmitComplaint: React.FC = () => {
         throw new Error("Please select a valid category");
       }
 
-      // Get token asynchronously - Note the await here!
-      const token = isAuthenticated ? await getToken() : null;
+      // No need to try authentication if we're going to use anonymous submission
       const baseUrl =
         import.meta.env.VITE_API_URL ||
         "https://citizen-complaints-app.onrender.com";
@@ -115,20 +116,15 @@ export const SubmitComplaint: React.FC = () => {
         "Content-Type": "application/json",
       };
 
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      console.log("Submitting with token:", token ? "Present" : "None");
-      console.log("Headers:", headers);
-
-      // If not authenticated, add anonymous flag for server to allow submission
+      // Create complaint data with anonymous flag set to true
       const complaintData = {
         ...formData,
-        anonymous: !isAuthenticated,
+        anonymous: true, // Force anonymous for now until Auth0 is fixed
       };
 
-      const response = await fetch(`${baseUrl}/complaints`, {
+      console.log("Submitting anonymously due to auth issues");
+
+      const response = await fetch(`${baseUrl}/api/complaints/anonymous`, {
         method: "POST",
         headers,
         body: JSON.stringify(complaintData),
@@ -178,9 +174,9 @@ export const SubmitComplaint: React.FC = () => {
         location: "",
       });
 
-      // Redirect to complaints list after successful submission
+      // Redirect to home page instead of dashboard
       setTimeout(() => {
-        navigate("/dashboard/complaints");
+        navigate("/");
       }, 2000);
     } catch (error) {
       console.error("Error submitting complaint:", error);
