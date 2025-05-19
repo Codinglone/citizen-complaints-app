@@ -22,12 +22,11 @@ export const SubmitComplaint: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // Note: Use /api/categories - the log shows that's the correct endpoint
         const response = await fetch(
           `${
             import.meta.env.VITE_API_URL ||
-            "https://citizen-complaints-app.onrender.com"
-          }/api/categories`
+            "https://citizen-complaints-app.onrender.com/api"
+          }/categories`
         );
 
         if (response.ok) {
