@@ -128,7 +128,7 @@ export const SubmitComplaint: React.FC = () => {
         anonymous: !isAuthenticated,
       };
 
-      const response = await fetch(`${baseUrl}/api/complaints`, {
+      const response = await fetch(`${baseUrl}/complaints`, {
         method: "POST",
         headers,
         body: JSON.stringify(complaintData),
