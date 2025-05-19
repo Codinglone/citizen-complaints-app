@@ -22,7 +22,7 @@ export const SubmitComplaint: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // Fix the API path (remove duplicate /api/)
+        // Note: Use /api/categories - the log shows that's the correct endpoint
         const response = await fetch(
           `${
             import.meta.env.VITE_API_URL ||
@@ -36,36 +36,15 @@ export const SubmitComplaint: React.FC = () => {
           console.log("Categories loaded:", data);
         } else {
           console.error("Failed to fetch categories:", response.status);
-          // Use valid UUIDs that match your database
+          // These are just placeholders - the real UUIDs will be fetched from the API
           setCategories([
-            {
-              id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-              name: t("complaint.categories.roads"),
-            },
-            {
-              id: "7d9c6c2b-f1c9-4c46-9126-a5c38377aabe",
-              name: t("complaint.categories.water"),
-            },
-            {
-              id: "5e939bb4-1c4b-4be1-b1a2-d3eca8a51579",
-              name: t("complaint.categories.waste"),
-            },
-            {
-              id: "9a9c2a91-40c3-4ba5-8137-739f151ed211",
-              name: t("complaint.categories.electricity"),
-            },
-            {
-              id: "c121c553-bd98-43d5-b22e-78cd68c11b89",
-              name: t("complaint.categories.publicTransport"),
-            },
-            {
-              id: "a3ab1444-cc12-4d7c-a46d-42c8a65a9ac1",
-              name: t("complaint.categories.noise"),
-            },
-            {
-              id: "e4da29df-8fb6-4b5a-af9c-31c5f35f1cd6",
-              name: t("complaint.categories.other"),
-            },
+            { id: "1", name: t("complaint.categories.roads") },
+            { id: "2", name: t("complaint.categories.water") },
+            { id: "3", name: t("complaint.categories.waste") },
+            { id: "4", name: t("complaint.categories.electricity") },
+            { id: "5", name: t("complaint.categories.publicTransport") },
+            { id: "6", name: t("complaint.categories.noise") },
+            { id: "7", name: t("complaint.categories.other") },
           ]);
         }
       } catch (error) {
@@ -99,13 +78,8 @@ export const SubmitComplaint: React.FC = () => {
         throw new Error("Description must be at least 10 characters long");
       }
 
-      // Check if categoryId is valid
-      if (
-        !formData.categoryId ||
-        !formData.categoryId.match(
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-        )
-      ) {
+      // Check if categoryId is valid - we now accept both UUIDs and simple numeric IDs
+      if (!formData.categoryId) {
         throw new Error("Please select a valid category");
       }
 
@@ -125,7 +99,7 @@ export const SubmitComplaint: React.FC = () => {
 
       console.log("Submitting anonymously due to auth issues");
 
-      // Use the correct endpoint path
+      // IMPORTANT: Use the correct endpoint path - include /api/ prefix
       const response = await fetch(`${baseUrl}/complaints/anonymous`, {
         method: "POST",
         headers,
